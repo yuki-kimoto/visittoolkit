@@ -1,0 +1,88 @@
+% layout 'common', title => 'りんごウィキ管理';
+
+%= javascript begin
+  $(function () {
+    
+    // Initialize wiki
+    $('input[name="init"]').click(function () {
+      if (!window.confirm("本当に初期化しますか。")) {
+        return false;
+      }
+      
+      // Initialize ringo wiki
+      $.post("<%= url_for "/api/init" %>", {}, function (result) {
+        if (result.success) {
+          window.location.href = "<%= url_for '/setup' %>";
+        }
+        else { alert("初期化失敗") }
+      }, "json");
+    });
+
+    // Setup again
+    $('input[name="resetup"]').click(function () {
+      if (!window.confirm("本当に再セットアップしますか。")) {
+        return false;
+      }
+      
+      // Overwritten setup
+      $.post("<%= url_for "/api/resetup" %>", {}, function (result) {
+        if (result.success) { alert("再セットアップ成功") }
+        else { alert("再セットアップ失敗") }
+      }, "json");
+    });
+
+    // Remove all pages
+    $('input[name="init_pages"]').click(function () {
+      if (!window.confirm("ページを初期化しますか。")) {
+        return false;
+      }
+      
+      // Overwritten setup
+      $.post("<%= url_for "/api/init-pages" %>", {}, function (result) {
+        if (result.success) { alert("ページを初期化しました。") }
+        else { alert("ページの初期化に失敗しました。") }
+      }, "json");
+    });
+  });
+% end
+
+<h1>りんごウィキ管理</h1>
+
+<h2>現在のWiki</h2>
+% if (@$wikies) {
+  <ul>
+    % for my $wiki (@$wikies) {
+      <li>
+        % my $id = $wiki->{id};
+        % my $title = $wiki->{title};
+        <a href="<%= url_for "/wiki/$id" %>"><%= $id %></a>
+        - <%= $title eq '' ? 'タイトル未設定' : $title %>
+        % if ($wiki->{main}) {
+          (メイン)
+        % }
+      </li>
+    % }
+  </ul>
+% } else {
+  ありません。
+% }
+
+<h2>ウィキ管理</h2>
+<ul>
+  <li><a href="<%= url_for '/create-wiki' %>">ウィキの作成</a>
+</ul>
+
+<h2>ユーザー管理</h2>
+<ul>
+  <li><a href="<%= url_for('/admin/user') %>">ユーザー管理</li>
+</ul>
+
+% if ($self->app->mode eq 'development') {
+  <h2>開発用ユーティリティ</h2>
+  <ul>
+    <li><input type="button" name="init" value="ウィキの初期化"></li>
+    <li><input type="button" name="init_pages" value="ページの初期化"></li>
+    <li><input type="button" name="resetup" value="再セットアップ" ></li>
+    <li><a href="<%= url_for '/sqliteviewerlite' %>">テーブル一覧</a></li>
+  </ul>
+% }

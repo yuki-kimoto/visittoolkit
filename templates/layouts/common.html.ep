@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+  <head>
+    <title><%= $title %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    %= javascript '/js/jquery-1.7.1.min.js';
+    %= javascript '/js/ringowikiapi.js';
+    
+    %= stylesheet '/css/common.css';
+    
+  </head>
+  <body class="frozen">
+    %= content;
+  </body>
+</html>
