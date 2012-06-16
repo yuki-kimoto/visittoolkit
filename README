@@ -1,0 +1,33 @@
+Visit Tool Kit
+
+  Vist Tool Kit
+
+Test
+
+  Run test to check setup is ok.
+
+    prove t
+
+  If all test is passed, setup is ok.
+
+Application start/stop (Linux/Unix)
+
+  Start
+
+      ./visittoolkit
+
+    Application start in back ground. Port is "10020" by default.
+    You can access appliaction on the following URL
+    
+      http://localhost:10020
+    
+    If you change port, edit "visittoolkit.conf".
+    See also Mojolicious "hypnotoad" command.
+
+    You can also restart application by same command.
+
+  Stop
+
+      ./visittoolkit --stop
+
+    You can stop application by "--stop" option.

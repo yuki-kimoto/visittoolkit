@@ -1,4 +1,0 @@
-visittoolkit
-============
-
-Visit Tool Kit
