@@ -1,25 +1,46 @@
-<!DOCTYPE html> 
-<html> 
-	<head> 
-	<title>Visit Toolkit</title> 
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	%= stylesheet '/css/jquery.mobile-1.1.0.min.css';
-	%= javascript '/js/jquery-1.7.1.min.js';
-	%= javascript '/js/jquery.mobile-1.1.0.min.js';
-</head> 
-<body> 
+% layout 'common', title => 'セットアップ';
 
-<div data-role="page">
+  %= javascript begin
+    $(function () {
+      // Setup
+      $('input[name="setup"]').click(function () {
+        
+        // Post form
+        var params = visittoolkitapi.create_form_data('#setup_form');
+        $.post("<%= url_for '/api/setup' %>", params, function (result) {
+          if (result.success) {
+            alert('セットアップ成功');
+            window.location.href = "<%= url_for '/admin' %>";
+          }
+          else {
+            var validation = result.validation;
+            if (validation.invalid) {
+              messages = validation.messages;
+              for (var name in messages) {
+                alert(messages[name]);
+                break;
+              }
+            }
+            else { alert('セットアップ失敗') }
+          }
+        }, "json");
+      });
+    });
+  % end
 
-	<div data-role="header">
-		<h1>Visit Toolkit</h1>
-	</div><!-- /header -->
-
-	<div data-role="content">	
-		<p>Hello world</p>		
-	</div><!-- /content -->
-
-</div><!-- /page -->
-
-</body>
-</html>
+  <div data-role="page">
+  	<div data-role="header">
+  		<h1>Visit Toolkit</h1>
+  	</div>
+  	<div data-role="content">	
+      <form id="setup_form">
+        <label for="setup-admin_user">管理者ID:</label>
+        <%= input_tag 'admin_user' => 'admin', id => 'setup-admin_user' %>
+        <label for="setup-admin_password1">管理者パスワード:</label>
+        <%= password_field 'admin_password1', id => 'setup-admin_password1'%>
+        <label for="setup-admin_password2">パスワード再入力:</label>
+        <%= password_field 'admin_password2', id => 'setup-admin_password2'%>
+        <input type="button" name="setup" value="セットアップ">
+      </form>
+  	</div>
+  </div>
