@@ -1,14 +1,6 @@
 package Visittoolkit::Main;
 use Mojo::Base 'Mojolicious::Controller';
 
-sub admin {
-  my $self = shift;
-  
-  my $wikies = $self->app->dbi->model('wiki')->select->all;
-  
-  return $self->render(wikies => $wikies);
-}
-
 sub admin_user {
   my $self = shift;
   
@@ -58,15 +50,6 @@ sub top {
     unless $self->app->util->setup_completed;
   
   # Redirect to main wiki
-  my $wiki = $self->app->dbi->model('wiki')
-    ->select(append => 'order by main desc')->one;
-  if ($wiki) {
-    return $self->redirect_to(
-      'page',
-      wiki_id => $wiki->{id},
-    );
-  }
-  
   $self->render;
 }
 

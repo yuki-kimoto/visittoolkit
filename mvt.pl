@@ -22,7 +22,8 @@ $tm->modules([
   ['Object::Simple' => '3.0625'],
   ['Validator::Custom' => '0.1426'],
   ['DBIx::Custom' => '0.25'],
-  ['DBIx::Connector' => '0.47']
+  ['DBIx::Connector' => '0.47'],
+  ['DateTime' => '0.75']
 ]);
 $tm->test_script(output => "$FindBin::Bin/t/module.t");
 

@@ -47,7 +47,7 @@ sub main {
   my $version_ok;
   my $version;
   
-  plan tests => 8;
+  plan tests => 10;
 
   # Object::Simple
   $require_ok = require_ok('Object::Simple');
@@ -72,6 +72,12 @@ sub main {
   $version_ok = is($DBIx::Connector::VERSION, '0.47', 'DBIx::Connector version: 0.47');
   push @$modules, ['DBIx::Connector' => '0.47'];
   push @$failed, ['DBIx::Connector' => '0.47'] unless $require_ok && $version_ok;
+
+  # DateTime
+  $require_ok = require_ok('DateTime');
+  $version_ok = is($DateTime::VERSION, '0.75', 'DateTime version: 0.75');
+  push @$modules, ['DateTime' => '0.75'];
+  push @$failed, ['DateTime' => '0.75'] unless $require_ok && $version_ok;
 
   # Print module URLs
   if (defined $command) {
