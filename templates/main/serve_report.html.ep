@@ -1,7 +1,13 @@
 % layout 'common', title => '奉仕報告';
 
 	<div data-role="header">
+		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
 		<h1>奉仕報告</h1>
+	</div>
+	<div data-role="header" data-theme="c">
+		<a href="a.html" data-role="button" data-icon= "arrow-l" data-iconpos="notext">前の月</a>
+		<h2><%= $current_month %></h2>
+		<a href="a.html" data-role="button" data-icon= "arrow-r" data-iconpos="notext">次の月</a>
 	</div>
 	<div data-role="content">
     <ul data-role="listview">

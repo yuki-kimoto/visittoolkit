@@ -1,10 +1,27 @@
 package Visittoolkit::Main;
 use Mojo::Base 'Mojolicious::Controller';
+use utf8;
 
 sub serve_report {
   my $self = shift;
   
-  $self->render;
+  # 現在の年月
+  my $dt = DateTime->now(time_zone => 'local', locale => 'ja');
+  my $current_month = $dt->strftime('%Y年%m月');
+  my $year = $dt->year;
+  my $month = $dt->month;
+  
+=pod
+  
+  my $last_mday = $dt->month;
+  
+  die $self->dumper([
+    $dt->year,
+    $dt->month,
+    DateTime->last_day_of_month(year => $dt->year, month => $dt->month)->day]);
+=cut
+  
+  $self->render(current_month => $current_month);
 }
 
 sub admin_user {
