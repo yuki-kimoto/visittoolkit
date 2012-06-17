@@ -1,0 +1,7 @@
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector.pm
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector/Driver.pm
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector/Driver/MSSQL.pm
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector/Driver/Oracle.pm
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector/Driver/Pg.pm
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector/Driver/SQLite.pm
+/home/kimoto/labo/visittoolkit/extlib/lib/perl5/DBIx/Connector/Driver/mysql.pm

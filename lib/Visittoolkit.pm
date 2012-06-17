@@ -17,7 +17,7 @@ sub startup {
   my $self = shift;
   
   # Load Pure Perl DateTime
-  my $lib = $self->home->rel_file('extlib/extlib/lib/perl5/x86_64-linux');
+  my $lib = $self->home->rel_file('extlib/lib/perl5/datetimelib');
   eval "use lib '$lib'";
   croak $@ if $@;
   $ENV{PERL_DATETIME_PP} = 1; # for DateTime

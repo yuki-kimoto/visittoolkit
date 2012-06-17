@@ -1,6 +1,12 @@
 package Visittoolkit::Main;
 use Mojo::Base 'Mojolicious::Controller';
 
+sub serve_report {
+  my $self = shift;
+  
+  $self->render;
+}
+
 sub admin_user {
   my $self = shift;
   
