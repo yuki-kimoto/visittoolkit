@@ -3,9 +3,9 @@
   %= javascript begin
     $(function () {
       // Setup
-      $('input[name="setup"]').click(function () {
-        
-        // Post form
+      $('input[name="submit"]').on('click', function () {
+      
+       // Post form
         var params = visittoolkitapi.create_form_data('#setup_form');
         $.post("<%= url_for '/api/setup' %>", params, function (result) {
           if (result.success) {
@@ -28,19 +28,31 @@
     });
   % end
 
-  <div data-role="page">
+  <div id="home" data-role="page">
   	<div data-role="header">
   		<h1>Visit Toolkit</h1>
   	</div>
   	<div data-role="content">	
-      <form id="setup_form">
+      <div id="setup_form">
         <label for="setup-admin_user">管理者ID:</label>
         <%= input_tag 'admin_user' => 'admin', id => 'setup-admin_user' %>
         <label for="setup-admin_password1">管理者パスワード:</label>
         <%= password_field 'admin_password1', id => 'setup-admin_password1'%>
         <label for="setup-admin_password2">パスワード再入力:</label>
         <%= password_field 'admin_password2', id => 'setup-admin_password2'%>
-        <input type="button" name="setup" value="セットアップ">
-      </form>
-  	</div>
+        <input type="submit" name="submit" value="セットアップ">
+      </div>
+      <a href="#error_dialog" data-role="button" data-inline="true" data-rel="dialog">Open dialog</a>
+    </div>
   </div>
+  
+  <div id="error_dialog" data-role="page">
+  	<div data-role="header">
+  		<h1>エラー</h1>
+  	</div>
+  	<div data-role="content">
+  	  <p>エラー</p>
+  	  <p><a href="#one" data-rel="back" data-role="button" data-inline="true" data-icon="back">最初のページに戻る</a></p>	
+    </div>
+  </div>
+  
