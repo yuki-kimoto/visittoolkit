@@ -7,6 +7,7 @@ use DBIx::Custom;
 use Validator::Custom;
 use Visittoolkit::Util;
 use Carp 'croak';
+use Visittoolkit::Function;
 
 has util => sub { Visittoolkit::Util->new(app => shift) };
 has validator => sub { Validator::Custom->new };
@@ -23,6 +24,13 @@ sub startup {
   $ENV{PERL_DATETIME_PP} = 1; # for DateTime
   $ENV{PV_TEST_PERL} = 1;     # for Params::Validate
   require DateTime;
+  
+  # Helper
+  $self->helper(visittoolkit => sub {
+    my $self = shift;
+    
+    return Visittoolkit::Function->new(controller => $self);
+  });
   
   # Config
   my $config = $self->plugin('Config');

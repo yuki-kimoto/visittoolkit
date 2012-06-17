@@ -1,16 +1,23 @@
 package Visittoolkit::Main;
 use Mojo::Base 'Mojolicious::Controller';
 use utf8;
+use DateTime;
+use DateTime::Format::Strptime;
 
 sub serve_report {
   my $self = shift;
   
   # 現在の年月
-  my $dt = DateTime->now(time_zone => 'local', locale => 'ja');
-  my $current_month = $dt->strftime('%Y年%m月');
-  my $year = $dt->year;
-  my $month = $dt->month;
+  my $month = $self->param('month');
+  my $current_dt
+    = DateTime::Format::Strptime->new(pattern => "%Y%m")->parse_datetime($month)
+    || DateTime->now(time_zone => 'local', locale => 'ja');
   
+  # 前の月
+  my $prev_dt = $current_dt->clone->add(months => -1, end_of_month => 'limit');
+  
+  # 次の月
+  my $next_dt = $current_dt->clone->add(months => 1, end_of_month => 'limit');
 =pod
   
   my $last_mday = $dt->month;
@@ -21,7 +28,11 @@ sub serve_report {
     DateTime->last_day_of_month(year => $dt->year, month => $dt->month)->day]);
 =cut
   
-  $self->render(current_month => $current_month);
+  $self->render(
+    prev_dt => $prev_dt,
+    current_dt => $current_dt,
+    next_dt => $next_dt
+  );
 }
 
 sub admin_user {

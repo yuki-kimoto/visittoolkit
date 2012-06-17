@@ -5,9 +5,9 @@
 		<h1>奉仕報告</h1>
 	</div>
 	<div data-role="header" data-theme="c">
-		<a href="a.html" data-role="button" data-icon= "arrow-l" data-iconpos="notext">前の月</a>
-		<h2><%= $current_month %></h2>
-		<a href="a.html" data-role="button" data-icon= "arrow-r" data-iconpos="notext">次の月</a>
+		<a href="<%= url_for->query(month => $prev_dt->strftime('%Y%m')) %>" data-role="button" data-icon= "arrow-l" data-iconpos="notext" data-transition="slide" data-direction="reverse">前の月</a>
+		<h2><%= $current_dt->strftime('%Y年%m月') %></h2>
+		<a href="<%= url_for->query(month => $next_dt->strftime('%Y%m')) %>" data-role="button" data-icon= "arrow-r" data-iconpos="notext" data-transition="slide">次の月</a>
 	</div>
 	<div data-role="content">
     <ul data-role="listview">
