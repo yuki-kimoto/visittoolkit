@@ -1,0 +1,16 @@
+% layout 'common', title => '奉仕報告';
+
+	<div data-role="header">
+		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
+		<h1>奉仕報告</h1>
+	</div>
+  <div class="ui-bar ui-bar-c" style="text-align:center">
+	  <%= $current_dt->strftime('%Y年%m月%d日(%a)') %>
+	</div>
+	<div data-role="navbar">
+		<ul>
+			<li><a href="<%= url_for->query(date => $prev_dt->strftime('%Y%m%d')) %>" data-transition="slide" data-direction="reverse">前の日</a></li>
+			<li><a href="<%= url_for->query(date => $next_dt->strftime('%Y%m%d')) %>" data-transition="slide">次の日</a></li>
+		</ul>
+	</div>
+	

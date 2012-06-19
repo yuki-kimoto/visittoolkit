@@ -17,7 +17,7 @@
             if (validation.invalid) {
               messages = validation.messages;
               for (var name in messages) {
-                $.mobile.changePage('<%= url_for('/error-dialog') %>',
+                $.mobile.changePage('<%= url_for('/errordialog') %>',
                   {data: {error: messages[name]}, transition: 'pop', role: 'dialog'});
                 break;
               }

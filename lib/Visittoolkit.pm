@@ -93,17 +93,7 @@ sub startup {
   
   # Route
   my $r = $self->routes;
-
-  # No brige
-  {
-    my $r = $r->route->to('main#');
-
-    # Error dialog
-    $r->get('/error-dialog')->to('#error_dialog');
-    $r->get('/visit-record')->to('#visit_record');
-    $r->get('/serve-report')->to('#serve_report');
-  }
-
+  
   # Brige
   {
     my $r = $r->under(sub {
@@ -127,9 +117,6 @@ sub startup {
     # Main
     {
       my $r = $r->route->to('main#');
-
-      # Top
-      $r->get('/')->to('#top')->name('top');
       
       # Login
       $r->get('/login')->to('#login');
@@ -137,18 +124,9 @@ sub startup {
       # Admin
       $r->get('/admin')->to('#admin');
       
-      # Admin user
-      $r->get('/admin/user')->to('#admin_user');
-
       # Setup
       $r->get('/setup')->to('#setup');
       
-      # Create wiki
-      $r->get('/create-wiki')->to('#create_wiki');
-      
-      # List wiki
-      $r->get('/list-wiki/:wiki_id')->to('#list_wiki')->name('list-wiki');
-
       # Error dialog
       $r->get('/error-dialog')->to('#error_dialog');
     }
@@ -184,6 +162,10 @@ sub startup {
       }
     }
   }
+
+  $r->get('/')->to('main#main');
+  $r->get('/:controller')->to('#main');
+  $r->get('/:controller/:action');
 }
 
 1;
