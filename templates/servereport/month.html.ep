@@ -4,13 +4,19 @@
 		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
 		<h1>奉仕報告</h1>
 	</div>
-  <div class="ui-bar ui-bar-c" style="text-align:center">
-	  <%= $current_dt->strftime('%Y年%m月') %>
-	</div>
-	<div data-role="navbar">
-		<ul>
-			<li><a href="<%= url_for->query(month => $prev_dt->strftime('%Y%m')) %>" data-transition="slide" data-direction="reverse">前の月</a></li>
-			<li><a href="<%= url_for->query(month => $next_dt->strftime('%Y%m')) %>" data-transition="slide">次の月</a></li>
-		</ul>
-	</div>
+
+  <div class="ui-grid-b" style="border-bottom:1px gray solid">
+  	<div class="ui-block-a" style="width:10%;text-align:left"><a href="<%= url_for->query(month => $prev_dt->strftime('%Y%m')) %>" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-transition="slide" data-direction="reverse">前の日</a></div>
+  	<div class="ui-block-b" style="width:80%;text-align:center; padding-top:12px;"><%= $current_dt->strftime('%Y年%m月') %></div>
+  	<div class="ui-block-c" style="width:10%;text-align:right"><a href="<%= url_for->query(month => $next_dt->strftime('%Y%m')) %>" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-transition="slide">次の日</a></div>
+  </div>
 	
+	<div style="padding:10px"><a data-role="button" data-inline="true" data-theme="c" data-mini="true" style="margin:0px;" href="<%= url_for('/servereport')->query(date => '20120613') %>">2012年06月13日</a></div>
+  <div class="ui-grid-b"> 
+  	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">書 12</div></div> 
+  	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">ブ 10</div></div> 
+  	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">時 2:45</div></div> 
+  	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">雑 20</div></div> 
+  	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">再 12</div></div> 
+  	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">研 1</div></div> 
+  </div>
