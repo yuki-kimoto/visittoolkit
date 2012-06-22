@@ -1,16 +1,41 @@
 % layout 'common', title => '奉仕報告';
+  %= stylesheet begin
+   .ui-grid-a { height:35px }
+  % end
 
 	<div data-role="header">
 		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
 		<h1>奉仕報告</h1>
 	</div>
-  <div class="ui-bar ui-bar-c" style="text-align:center">
-	  <%= $current_dt->strftime('%Y年%m月%d日(%a)') %>
+  <div class="ui-grid-b" style="border-bottom:1px gray solid">
+  	<div class="ui-block-a" style="width:10%;text-align:left"><a href="<%= url_for->query(date => $prev_dt->strftime('%Y%m%d')) %>" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-transition="slide" data-direction="reverse">前の日</a></div>
+  	<div class="ui-block-b" style="width:80%;text-align:center; padding-top:12px;"><%= $current_dt->strftime('%Y年%m月%d日(%a)') %></div>
+  	<div class="ui-block-c" style="width:10%;text-align:right"><a href="<%= url_for->query(date => $next_dt->strftime('%Y%m%d')) %>" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-transition="slide">次の日</a></div>
+  </div>
+
+	<div data-role="content" >
+    <div class="ui-grid-a">
+    	<div class="ui-block-a">書籍</div>
+    	<div class="ui-block-b">12冊</div>
+    </div>
+    <div class="ui-grid-a">
+    	<div class="ui-block-a">ブロシュア</div>
+    	<div class="ui-block-b">10冊</div>
+    </div>
+    <div class="ui-grid-a">
+    	<div class="ui-block-a">時間</div>
+    	<div class="ui-block-b">2:45</div>
+    </div>
+    <div class="ui-grid-a">
+    	<div class="ui-block-a">雑誌</div>
+    	<div class="ui-block-b">20冊</div>
+    </div>
+    <div class="ui-grid-a">
+    	<div class="ui-block-a">再訪問</div>
+    	<div class="ui-block-b">12件</div>
+    </div>
+    <div class="ui-grid-a">
+    	<div class="ui-block-a">研究</div>
+    	<div class="ui-block-b">1件</div>
+    </div>
 	</div>
-	<div data-role="navbar">
-		<ul>
-			<li><a href="<%= url_for->query(date => $prev_dt->strftime('%Y%m%d')) %>" data-transition="slide" data-direction="reverse">前の日</a></li>
-			<li><a href="<%= url_for->query(date => $next_dt->strftime('%Y%m%d')) %>" data-transition="slide">次の日</a></li>
-		</ul>
-	</div>
-	
