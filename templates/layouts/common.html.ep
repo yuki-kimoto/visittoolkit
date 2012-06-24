@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   	%= stylesheet '/css/jquery.mobile-1.1.0.min.css';
   	%= javascript '/js/jquery-1.7.1.min.js';
+    %= javascript begin 
+      $(document).bind("mobileinit", function(){
+        $.mobile.ajaxEnabled = false; 
+        $.mobile.pushStateEnabled = false;
+      });
+    % end
   	%= javascript '/js/jquery.mobile-1.1.0.min.js';
   	%= javascript '/js/visittoolkitapi.js';
-    
   </head>
   <body>
     %= content;
