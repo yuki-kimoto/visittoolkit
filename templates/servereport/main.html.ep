@@ -3,6 +3,13 @@
    .ui-grid-a { height:35px }
   % end
 
+  %= javascript begin
+    $(function () {
+      $.mobile.changePage('<%= url_for('/errordialog') %>',
+        {data: {error: "aaa"}, transition: 'pop', role: 'dialog'});
+    });
+  % end
+
 	<div data-role="header">
 		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
 		<h1>奉仕報告</h1>
@@ -20,39 +27,41 @@
         <div class="ui-grid-a">
         	<div class="ui-block-a">書籍</div>
         	<div class="ui-block-b">
-        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="book"/> 冊
+        	  <input style="margin:0;padding:0;width:50px;display:inline" type="number" value="0" name="book"/>
+        	  冊
         	</div>
         </div>
         <div class="ui-grid-a">
         	<div class="ui-block-a">ブロシュア</div>
         	<div class="ui-block-b">
-        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="brochure"/> 冊
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="brochure"/> 冊
         	</div>
         </div>
         <div class="ui-grid-a">
         	<div class="ui-block-a">時間</div>
         	<div class="ui-block-b">
-        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="time"/>
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="time" name="time"/>
         	</div>
         </div>
         <div class="ui-grid-a">
         	<div class="ui-block-a">雑誌</div>
         	<div class="ui-block-b">
-        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="magazine"/> 冊
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="magazine"/> 冊
         	</div>
         </div>
         <div class="ui-grid-a">
         	<div class="ui-block-a">再訪問</div>
         	<div class="ui-block-b">
-        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="return_visit"/> 件
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="return_visit"/> 件
         	</div>
         </div>
         <div class="ui-grid-a">
         	<div class="ui-block-a">研究</div>
         	<div class="ui-block-b">
-        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="study"/> 件
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="study"/> 件
         	</div>
         </div>
+  	    <a href="<%= url_for %>" data-rel="back" data-role="button" data-theme="a" data-inline="true">戻る</a>
   	    <a href="<%= url_for %>" data-role="button" data-theme="a" data-inline="true">保存</a>
       </form>
     % } else {
@@ -80,6 +89,7 @@
       	<div class="ui-block-a">研究</div>
       	<div class="ui-block-b">1件</div>
       </div>
+  	  <a href="<%= url_for->query(action => 'edit') %>" data-role="button" data-theme="a" data-inline="true">編集</a>
   	  <a href="<%= url_for->query(action => 'edit') %>" data-role="button" data-theme="a" data-inline="true">編集</a>
     % }
 	</div>
