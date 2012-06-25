@@ -9,6 +9,21 @@ our $TABLE_INFOS = {
     'password not null',
     'admin not null',
   ],
+  serve_report_date => [
+    "date date unique not null default ''",
+    'book not null default 0',
+    'brochure not null default 0',
+    'time not null default 0',
+    'magazine not null default 0',
+    'return_visit not null default 0',
+    'study not null default 0'
+  ],
+  serve_report_month => [
+    "year not null default ''",
+    "month not null default ''",
+    'study not null default 0',
+    'unique(year, month)'
+  ]
 };
 
 sub init {

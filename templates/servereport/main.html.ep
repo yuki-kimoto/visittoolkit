@@ -14,28 +14,72 @@
   </div>
 
 	<div data-role="content" >
-    <div class="ui-grid-a">
-    	<div class="ui-block-a">書籍</div>
-    	<div class="ui-block-b">12冊</div>
-    </div>
-    <div class="ui-grid-a">
-    	<div class="ui-block-a">ブロシュア</div>
-    	<div class="ui-block-b">10冊</div>
-    </div>
-    <div class="ui-grid-a">
-    	<div class="ui-block-a">時間</div>
-    	<div class="ui-block-b">2:45</div>
-    </div>
-    <div class="ui-grid-a">
-    	<div class="ui-block-a">雑誌</div>
-    	<div class="ui-block-b">20冊</div>
-    </div>
-    <div class="ui-grid-a">
-    	<div class="ui-block-a">再訪問</div>
-    	<div class="ui-block-b">12件</div>
-    </div>
-    <div class="ui-grid-a">
-    	<div class="ui-block-a">研究</div>
-    	<div class="ui-block-b">1件</div>
-    </div>
+
+    % if ((param('action') || '') eq 'edit') {
+      <form>
+        <div class="ui-grid-a">
+        	<div class="ui-block-a">書籍</div>
+        	<div class="ui-block-b">
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="book"/> 冊
+        	</div>
+        </div>
+        <div class="ui-grid-a">
+        	<div class="ui-block-a">ブロシュア</div>
+        	<div class="ui-block-b">
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="brochure"/> 冊
+        	</div>
+        </div>
+        <div class="ui-grid-a">
+        	<div class="ui-block-a">時間</div>
+        	<div class="ui-block-b">
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="time"/>
+        	</div>
+        </div>
+        <div class="ui-grid-a">
+        	<div class="ui-block-a">雑誌</div>
+        	<div class="ui-block-b">
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="magazine"/> 冊
+        	</div>
+        </div>
+        <div class="ui-grid-a">
+        	<div class="ui-block-a">再訪問</div>
+        	<div class="ui-block-b">
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="return_visit"/> 件
+        	</div>
+        </div>
+        <div class="ui-grid-a">
+        	<div class="ui-block-a">研究</div>
+        	<div class="ui-block-b">
+        	  <input style="margin:0;padding:0;width:80px;display:inline" type="text" name="study"/> 件
+        	</div>
+        </div>
+  	    <a href="<%= url_for %>" data-role="button" data-theme="a" data-inline="true">保存</a>
+      </form>
+    % } else {
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">書籍</div>
+      	<div class="ui-block-b">12冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">ブロシュア</div>
+      	<div class="ui-block-b">10冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">時間</div>
+      	<div class="ui-block-b">2:45</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">雑誌</div>
+      	<div class="ui-block-b">20冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">再訪問</div>
+      	<div class="ui-block-b">12件</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">研究</div>
+      	<div class="ui-block-b">1件</div>
+      </div>
+  	  <a href="<%= url_for->query(action => 'edit') %>" data-role="button" data-theme="a" data-inline="true">編集</a>
+    % }
 	</div>
