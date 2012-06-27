@@ -1,8 +1,114 @@
 % layout 'common', title => '奉仕報告';
   %= stylesheet begin
-   .ui-grid-a { height:35px }
+   .ui-grid-a {
+     height:45px;
+     font-size:120%;
+   }
+   
+   .ui-block-a, .ui-block-b {
+     line-height:45px;
+   }
   % end
-  
+
+  %= javascript begin
+    $(document).bind('pageinit', function(e, d) {
+      $('#popup-button').on('click', function () {
+        $('#number-input-popup').show();
+      });
+    
+      var NumberInputPopup = function () {
+        
+        // Component
+        var popup_t = $('<div id="number-input-popup">');
+        var input_t = $('<input style="margin: 0px 0px 0px 0px;height:30px;width:99px;display:inline" type="text" >');
+        input_t.appendTo(popup_t);
+        var controll_block_t = $('<div data-role="controlgroup" data-type="horizontal" style="margin-top:0px;margin-bottom:0px;padding:0">');
+        controll_block_t.appendTo(popup_t);
+        var down_btn_t = $('<a href="/doc/jquery_mobile/" data-role="button" data-inline="true">▼</a>');
+        down_btn_t.appendTo(controll_block_t);
+        var up_btn_t = $('<a href="/doc/jquery_mobile/" data-role="button" data-inline="true">▲</a>');
+        up_btn_t.appendTo(controll_block_t);
+        var ok_btn_t = $('<input type="button" value="OK" data-inline="ture" style="width:99px;margin:0;padding:0;">');
+        ok_btn_t.appendTo(popup_t);
+        var cancel_btn_t = $('<input type="button" value="キャンセル" data-inline="true" data-icon="delete" data-iconpos="notext">');
+        cancel_btn_t.appendTo(popup_t);
+        
+        // Add object
+        var obj = {};
+        obj.input = input_t;
+        obj.controll_block = controll_block_t;
+        obj.donw_btn = down_btn_t;
+        obj.up_btn = up_btn_t;
+        obj.ok_btn = ok_btn_t;
+        obj.cancel_bnt = cancel_btn_t;
+        this.obj = obj;
+        
+        // Event
+        
+        
+        popup_t
+          .css('display', 'none')
+          .css('background-color', 'white')
+          .css('border', '1px gray solid')
+          .css('height', '136px')
+          .css('width', '130px')
+          .css('text-align', 'center')
+          .css('padding', '5px')
+          .css('position', 'absolute')
+        ;
+        
+        this.component = popup_t;
+      };
+      
+      NumberInputPopup.prototype.show = function (x, y) {
+        var popup = this.component;
+        popup
+          .appendTo('body')
+          .trigger('create')
+          .css('left', x)
+          .css('top', y)
+          .show()
+        ;
+      };
+
+      NumberInputPopup.prototype.on = function (event) {
+        if (event === 'after_ok') {
+          this.obj.ok_btn.on('click', event);
+        }
+        else if (event === 'after_cancel') {
+          this.obj.cancel_btn.on('click', event);
+        }
+      };
+
+      NumberInputPopup.prototype.hide = function (x, y) {
+        var popup = this.component;
+        popup.remove();
+      };
+      
+      $('#book_edit').on('click', function() {
+        
+        $(this).css('background-color', 'pink');
+        var popup = (new NumberInputPopup);
+        
+        var x = $(this).position().left;
+        var y = $(this).position().top;
+        
+        popup.show(x, y + 45);
+        
+        /*
+        $('body').append(popup);
+        popup.trigger('create');
+
+        popup
+          .css('left', x)
+          .css('top', y + 45)
+          .show()
+        ;
+        */
+      });
+    });
+  % end
+    
   <div data-role="page">
   	<div data-role="header">
   		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
@@ -15,86 +121,30 @@
     </div>
 
   	<div data-role="content" >
-
-      % if ((param('action') || '') eq 'edit') {
-        <form>
-          <div class="ui-grid-a">
-          	<div class="ui-block-a">書籍</div>
-          	<div class="ui-block-b">
-          	  <input style="margin:0;padding:0;width:50px;display:inline" type="number" value="0" name="book"/>
-          	  冊
-          	</div>
-          </div>
-          <div class="ui-grid-a">
-          	<div class="ui-block-a">ブロシュア</div>
-          	<div class="ui-block-b">
-          	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="brochure"/> 冊
-          	</div>
-          </div>
-          <div class="ui-grid-a">
-          	<div class="ui-block-a">時間</div>
-          	<div class="ui-block-b">
-          	  <input style="margin:0;padding:0;width:80px;display:inline" type="time" name="time"/>
-          	</div>
-          </div>
-          <div class="ui-grid-a">
-          	<div class="ui-block-a">雑誌</div>
-          	<div class="ui-block-b">
-          	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="magazine"/> 冊
-          	</div>
-          </div>
-          <div class="ui-grid-a">
-          	<div class="ui-block-a">再訪問</div>
-          	<div class="ui-block-b">
-          	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="return_visit"/> 件
-          	</div>
-          </div>
-          <div class="ui-grid-a">
-          	<div class="ui-block-a">研究</div>
-          	<div class="ui-block-b">
-          	  <input style="margin:0;padding:0;width:80px;display:inline" type="number" value="0" name="study"/> 件
-          	</div>
-          </div>
-    	    <a href="<%= url_for %>" data-rel="back" data-role="button" data-theme="a" data-inline="true">戻る</a>
-    	    <a href="<%= url_for %>" data-role="button" data-theme="a" data-inline="true">保存</a>
-        </form>
-      % } else {
-        <div class="ui-grid-a">
-        	<div class="ui-block-a">書籍</div>
-        	<div class="ui-block-b">12冊</div>
-        </div>
-        <div class="ui-grid-a">
-        	<div class="ui-block-a">ブロシュア</div>
-        	<div class="ui-block-b">10冊</div>
-        </div>
-        <div class="ui-grid-a">
-        	<div class="ui-block-a">時間</div>
-        	<div class="ui-block-b">2:45</div>
-        </div>
-        <div class="ui-grid-a">
-        	<div class="ui-block-a">雑誌</div>
-        	<div class="ui-block-b">20冊</div>
-        </div>
-        <div class="ui-grid-a">
-        	<div class="ui-block-a">再訪問</div>
-        	<div class="ui-block-b">12件</div>
-        </div>
-        <div class="ui-grid-a">
-        	<div class="ui-block-a">研究</div>
-        	<div class="ui-block-b">1件</div>
-        </div>
-    	  <a href="<%= url_for->query(action => 'edit') %>" data-role="button" data-theme="a" data-inline="true">編集</a>
-    	  <a href="<%= url_for->query(action => 'edit') %>" data-role="button" data-theme="a" data-inline="true">編集</a>
-      % }
-  	</div>
-
-    %= javascript begin
-      $(document).bind('pageinit', function(e, d) {
-        $('#popup-button').on('click', function () {
-          $('#number-input-popup').show();
-        })
-      });
-    % end
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">書籍</div>
+      	<div class="ui-block-b" id="book_edit"><span id="book_value">12</span>冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">ブロシュア</div>
+      	<div class="ui-block-b" id="brochure_edit"><span id="brochure_value">10</span>冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">時間</div>
+      	<div class="ui-block-b" id="time_edit"><span id="time_value">2:45</span></div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">雑誌</div>
+      	<div class="ui-block-b" id="magazine_edit"><span id="magazine_value">20冊</span></div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">再訪問</div>
+      	<div class="ui-block-b" id="return_visit_edit"><span id="return_visit_value">12</span>件</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">研究</div>
+      	<div class="ui-block-b" id="study_edit"><span id="study_value">1</span>件</div>
+      </div>
 
     %= stylesheet begin
       #number-input-popup {
@@ -105,6 +155,7 @@
         width:130px;
         text-align:center;
         padding:5px;
+        position:absolute;
       }
     % end
     
@@ -114,7 +165,7 @@
   			<a href="/doc/jquery_mobile/" data-role="button">▼</a> 
   			<a href="/doc/jquery_mobile/" data-role="button">▲</a> 
   		</div>
-	    <input type="button" value="　OK　" data-inline="ture" style="width:99px;margin:0;padding:0;">
+	    <input type="button" value="OK" data-inline="ture" style="width:99px;margin:0;padding:0;">
+	    <input type="button" value="キャンセル" data-inline="true" data-icon="delete" data-iconpos="notext">
     </div>
-    <div><a href="#" data-role="button" data-inline="true" id="popup-button">ポップアップ</a></div>
   </div>
