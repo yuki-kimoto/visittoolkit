@@ -17,6 +17,7 @@
       });
     
       var NumberInputPopup = function () {
+        var that = this;
         
         // Component
         var popup_t = $('<div id="number-input-popup">');
@@ -40,11 +41,16 @@
         obj.donw_btn = down_btn_t;
         obj.up_btn = up_btn_t;
         obj.ok_btn = ok_btn_t;
-        obj.cancel_bnt = cancel_btn_t;
+        obj.cancel_btn = cancel_btn_t;
         this.obj = obj;
         
         // Event
-        
+        ok_btn_t.on('click', function () {
+          that.hide();
+        });
+        cancel_btn_t.on('click', function () {
+          that.hide();
+        });
         
         popup_t
           .css('display', 'none')
@@ -62,33 +68,49 @@
       
       NumberInputPopup.prototype.show = function (x, y) {
         var popup = this.component;
+        
+        if (!this.is_appended) {
+          popup
+            .appendTo('body')
+            .trigger('create')
+          ;
+        }
+
         popup
-          .appendTo('body')
-          .trigger('create')
           .css('left', x)
           .css('top', y)
           .show()
         ;
+        
+        this.is_appended = 1;
+        this.is_shown = 1;
       };
 
-      NumberInputPopup.prototype.on = function (event) {
+      NumberInputPopup.prototype.on = function (event, cb) {
+
         if (event === 'after_ok') {
-          this.obj.ok_btn.on('click', event);
+          this.obj.ok_btn.on('click', function () { cb() });
         }
         else if (event === 'after_cancel') {
-          this.obj.cancel_btn.on('click', event);
+          this.obj.cancel_btn.on('click', function () { cb() });
         }
       };
 
-      NumberInputPopup.prototype.hide = function (x, y) {
-        var popup = this.component;
-        popup.remove();
+      NumberInputPopup.prototype.hide = function () {
+        this.component.hide();
+        this.is_shown = 0;
       };
       
       $('#book_edit').on('click', function() {
+        var that = this;
         
+        var original_backgound_color = $(this).css('background-color');
         $(this).css('background-color', 'pink');
-        var popup = (new NumberInputPopup);
+
+        var popup = new NumberInputPopup;
+        popup.on('after_cancel', function () {
+          $(that).css('background-color', original_backgound_color);
+        });
         
         var x = $(this).position().left;
         var y = $(this).position().top;
@@ -165,7 +187,7 @@
   			<a href="/doc/jquery_mobile/" data-role="button">▼</a> 
   			<a href="/doc/jquery_mobile/" data-role="button">▲</a> 
   		</div>
-	    <input type="button" value="OK" data-inline="ture" style="width:99px;margin:0;padding:0;">
+	    <input type="button" value="更新" data-inline="ture" style="width:99px;margin:0;padding:0;">
 	    <input type="button" value="キャンセル" data-inline="true" data-icon="delete" data-iconpos="notext">
     </div>
   </div>
