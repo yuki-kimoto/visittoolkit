@@ -11,160 +11,79 @@
   % end
 
   %= javascript begin
-    $(document).bind('pageinit', function(e, d) {
-      $('#popup-button').on('click', function () {
-        $('#number-input-popup').show();
-      });
-    
-      var NumberInputPopup = function () {
-        var that = this;
-        
-        // Component
-        var popup_t = $('<div id="number-input-popup">');
-        var input_t = $('<input style="margin: 0px 0px 0px 0px;height:30px;width:99px;display:inline" type="text" >');
-        input_t.appendTo(popup_t);
-        var controll_block_t = $('<div data-role="controlgroup" data-type="horizontal" style="margin-top:0px;margin-bottom:0px;padding:0">');
-        controll_block_t.appendTo(popup_t);
-        var down_btn_t = $('<input type="button" value="▼">');
-        down_btn_t.appendTo(controll_block_t);
-        var up_btn_t = $('<input type="button" value="▲">');
-        up_btn_t.appendTo(controll_block_t);
-        var ok_btn_t = $('<input type="button" value="OK" data-inline="ture" style="width:99px;margin:0;padding:0;">');
-        ok_btn_t.appendTo(popup_t);
-        var cancel_btn_t = $('<input type="button" value="キャンセル" data-inline="true" data-icon="delete" data-iconpos="notext">');
-        cancel_btn_t.appendTo(popup_t);
-        
-        // Add object
-        var obj = {};
-        obj.input = input_t;
-        obj.controll_block = controll_block_t;
-        obj.donw_btn = down_btn_t;
-        obj.up_btn = up_btn_t;
-        obj.ok_btn = ok_btn_t;
-        obj.cancel_btn = cancel_btn_t;
-        this.obj = obj;
-        
-        // Event
-        cancel_btn_t.on('click', function () {
-          that.hide();
-        });
-        down_btn_t.on('click', function () {
-          var value = that.obj.input.val();
+    $(document).ready(function () {
+      var NumberInputPage = function (id, title, suffix) {
+      
+        var html =
+          '<div data-role="page" id="' + id + '">' +
+            '<div data-role="header" data-theme="b">' +
+              '<h1>編集</h1>' +
+            '</div>' +
+            '<div data-role="content">' +
+              '<h2 style="margin-bottom:15px;margin-top:0px;">' + title + '</h2>' +
+              '<div style="border:2px #BBBBBB solid; padding:15px 12px">' +
+                '<div class="ui-grid-a">' +
+                	'<div class="ui-block-a"><input type="text" readonly class="NumberInputPage-input" value="0"></div>' +
+                	'<div class="ui-block-b"><span style="line-height:42px;padding-left:18px;font-size:160%">' + suffix + '</span></div>' +
+                '</div>' +
+              	'<div style="margin-top:9px">' +
+                  '<span data-role="controlgroup" data-type="horizontal">' +
+                    '<input type="button" class="NumberInputPage-down" value="▼">' +
+                    '<input type="button" class="NumberInputPage-up" value="▲">' +
+                  '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ui-grid-a" style="margin-top:7px">' +
+                '<div class="ui-block-a"><a href="#home" data-role="button" class="NumberInputPage-ok" data-rel="back" data-icon="star">OK</a></div>' +
+                '<div class="ui-block-b"><a href="#home" data-role="button" class="NumberInputPage-cancel" data-rel="back" data-icon="back">戻る</a></div>' +
+              '</div>' +
+            '</div>' +
+          '</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>';
           
-          if (!value || value === '') {
-            value = 0;
-          }
-          value = +value;
+          var page = this.page = $(html);
+          var input_box = this.input_box = page.find('.NumberInputPage-input');
+          var down_btn = this.down_btn = page.find('.NumberInputPage-down');
+          var up_btn = this.up_btn = page.find('.NumberInputPage-up');
+          var ok_btn = this.ok_btn = page.find('.NumberInputPage-ok');
           
-          if (value !== 0) {
-            value = value - 1;
-          }
+          down_btn.on('click', function () {
+            var value = input_box.val();
+            value = +value;
+            if (value !== 0) {
+              value = value - 1;
+            }
+            input_box.val(value);
+          });
           
-          that.obj.input.val(value);
-          
-          return true;
-        });
-
-        up_btn_t.on('click', function () {
-          var value = that.obj.input.val();
-          
-          if (!value || value === '') {
-            value = 0;
-          }
-          value = +value;
-          value = value + 1;
-          
-          that.obj.input.val(value);
-          
-          return true;
-        });
-                
-        popup_t
-          .css('display', 'none')
-          .css('background-color', 'white')
-          .css('border', '1px gray solid')
-          .css('height', '136px')
-          .css('width', '130px')
-          .css('text-align', 'center')
-          .css('padding', '5px')
-          .css('position', 'absolute')
-        ;
-        
-        this.component = popup_t;
+          up_btn.on('click', function () {
+            var value = input_box.val();
+            value = +value;
+            value = value + 1;
+            input_box.val(value);
+          });
       };
       
-      NumberInputPopup.prototype.show = function (x, y) {
-        var popup = this.component;
-        
-        if (!this.is_appended) {
-          popup
-            .appendTo('body')
-            .trigger('create')
-          ;
-        }
+      var number_input_page = new NumberInputPage('brochure_edit_page', 'ブロシュアの編集', '冊');
+      number_input_page.page.appendTo('body');
 
-        popup
-          .css('left', x)
-          .css('top', y)
-          .show()
-        ;
-        
-        this.is_appended = 1;
-        this.is_shown = 1;
-      };
-
-      NumberInputPopup.prototype.on = function (event, cb) {
-
-        if (event === 'after_ok') {
-          this.obj.ok_btn.on('click', function () { cb() });
-        }
-        else if (event === 'after_cancel') {
-          this.obj.cancel_btn.on('click', function () { cb() });
-        }
-      };
-
-      NumberInputPopup.prototype.hide = function () {
-        this.component.hide();
-        this.is_shown = 0;
-      };
+      var original_color = $('#brochure_edit').css('background-color');
       
-      $('#book_edit').on('click', function() {
+      $('#brochure_edit').on('click', function () {
         var that = this;
-        
-        var original_backgound_color = $(this).css('background-color');
-        $(this).css('background-color', 'pink');
-
-        var popup = new NumberInputPopup;
-        popup.on('after_ok', function () {
-          $(that).css('background-color', original_backgound_color);
-          $('#book_value').text(popup.obj.input.val());
-          popup.hide();
-          
-        });
-        popup.on('after_cancel', function () {
-          $(that).css('background-color', original_backgound_color);
-        });
-        
-        var x = $(this).position().left;
-        var y = $(this).position().top;
-        
-        popup.obj.input.val($('#book_value').text());
-        
-        popup.show(x, y + 45);
-        
-        /*
-        $('body').append(popup);
-        popup.trigger('create');
-
-        popup
-          .css('left', x)
-          .css('top', y + 45)
-          .show()
-        ;
-        */
+        $(that).css('background-color', '#7CA5F0')
+        setTimeout(function () { $('#brochure_edit').css('background-color', original_color) }, 2000);
+        number_input_page.input_box.val($('#brochure_value').text());
+        $.mobile.changePage('#brochure_edit_page');
       });
+      number_input_page.ok_btn.on('click', function () {
+        var that = this;
+        $('#brochure_value').text(number_input_page.input_box.val());
+        $('#brochure_edit').css('background-color', '#7CA5F0')
+        setTimeout(function () { $('#brochure_edit').css('background-color', original_color) }, 2000);
+      });
+      
     });
-  % end
+   % end
     
   <div data-role="page" id="home">
   	<div data-role="header">
@@ -202,38 +121,8 @@
       	<div class="ui-block-a">研究</div>
       	<div class="ui-block-b" id="study_edit"><span id="study_value">1</span>件</div>
       </div>
-      <a href="#brochure_edit_page" data-role="button">ブロシュアの編集</a>
     </div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     
 	</div>
-  <div data-role="page" id="brochure_edit_page">
 
-    <div data-role="header">
-      <h1>編集</h1>
-    </div>
-
-    <div data-role="content">
-      <h2 style="margin-bottom:15px;margin-top:0px;">ブロシュア</h2>
-      <div style="border:2px #BBBBBB solid; padding:15px 12px">
-        <div class="ui-grid-a">
-        	<div class="ui-block-a"><input type="text" ></div>
-        	<div class="ui-block-b"><span style="line-height:42px;padding-left:18px;font-size:160%">冊</span></div>
-        </div>
-      	<div style="margin-top:9px">
-          <span data-role="controlgroup" data-type="horizontal">
-            <input type="button" value="▼">
-            <input type="button" value="▲">
-          </span>
-        </div>
-      </div>
-      <div class="ui-grid-a" style="margin-top:7px">
-      	<div class="ui-block-a"><input type="button" value="OK" data-icon="star"></div>
-      	<div class="ui-block-b"><a href="#home" data-role="button" data-rel="back">戻る</a></div>
-      </div>
-    </div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  </div>
