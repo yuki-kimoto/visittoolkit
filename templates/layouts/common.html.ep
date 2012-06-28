@@ -9,6 +9,21 @@
       $(document).bind("mobileinit", function(){
         $.mobile.ajaxEnabled = false; 
         $.mobile.pushStateEnabled = false;
+        //$.mobile.useFastClick = false;
+
+        // スクロール位置が常に復元される
+        //$.mobile.minScrollBack     = '0';
+
+        // 常に復元されなくなる
+        //$.mobile.minScrollBack     = 'infinity';
+        
+        $('div').live('pageshow', function () {
+          setTimeout(function () { scrollTo(0, 1) }, 100);
+        });
+        
+        $('div').live('onorientationchange', function () {
+          setTimeout(function () { scrollTo(0, 1) }, 100);
+        });
       });
     % end
   	%= javascript '/js/jquery.mobile-1.1.0.min.js';

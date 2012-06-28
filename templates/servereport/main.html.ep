@@ -1,11 +1,11 @@
 % layout 'common', title => '奉仕報告';
   %= stylesheet begin
-   .ui-grid-a {
+   #home .ui-grid-a {
      height:45px;
      font-size:120%;
    }
    
-   .ui-block-a, .ui-block-b {
+   #home #content .ui-block-a, #home #content .ui-block-b {
      line-height:45px;
    }
   % end
@@ -25,9 +25,9 @@
         input_t.appendTo(popup_t);
         var controll_block_t = $('<div data-role="controlgroup" data-type="horizontal" style="margin-top:0px;margin-bottom:0px;padding:0">');
         controll_block_t.appendTo(popup_t);
-        var down_btn_t = $('<a href="/doc/jquery_mobile/" data-role="button" data-inline="true">▼</a>');
+        var down_btn_t = $('<input type="button" value="▼">');
         down_btn_t.appendTo(controll_block_t);
-        var up_btn_t = $('<a href="/doc/jquery_mobile/" data-role="button" data-inline="true">▲</a>');
+        var up_btn_t = $('<input type="button" value="▲">');
         up_btn_t.appendTo(controll_block_t);
         var ok_btn_t = $('<input type="button" value="OK" data-inline="ture" style="width:99px;margin:0;padding:0;">');
         ok_btn_t.appendTo(popup_t);
@@ -45,13 +45,40 @@
         this.obj = obj;
         
         // Event
-        ok_btn_t.on('click', function () {
-          that.hide();
-        });
         cancel_btn_t.on('click', function () {
           that.hide();
         });
-        
+        down_btn_t.on('click', function () {
+          var value = that.obj.input.val();
+          
+          if (!value || value === '') {
+            value = 0;
+          }
+          value = +value;
+          
+          if (value !== 0) {
+            value = value - 1;
+          }
+          
+          that.obj.input.val(value);
+          
+          return true;
+        });
+
+        up_btn_t.on('click', function () {
+          var value = that.obj.input.val();
+          
+          if (!value || value === '') {
+            value = 0;
+          }
+          value = +value;
+          value = value + 1;
+          
+          that.obj.input.val(value);
+          
+          return true;
+        });
+                
         popup_t
           .css('display', 'none')
           .css('background-color', 'white')
@@ -108,12 +135,20 @@
         $(this).css('background-color', 'pink');
 
         var popup = new NumberInputPopup;
+        popup.on('after_ok', function () {
+          $(that).css('background-color', original_backgound_color);
+          $('#book_value').text(popup.obj.input.val());
+          popup.hide();
+          
+        });
         popup.on('after_cancel', function () {
           $(that).css('background-color', original_backgound_color);
         });
         
         var x = $(this).position().left;
         var y = $(this).position().top;
+        
+        popup.obj.input.val($('#book_value').text());
         
         popup.show(x, y + 45);
         
@@ -131,7 +166,7 @@
     });
   % end
     
-  <div data-role="page">
+  <div data-role="page" id="home">
   	<div data-role="header">
   		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
   		<h1>奉仕報告</h1>
@@ -142,7 +177,7 @@
     	<div class="ui-block-c" style="width:10%;text-align:right"><a href="<%= url_for->query(date => $next_dt->strftime('%Y%m%d')) %>" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-transition="slide">次の日</a></div>
     </div>
 
-  	<div data-role="content" >
+  	<div data-role="content" id="content">
       <div class="ui-grid-a">
       	<div class="ui-block-a">書籍</div>
       	<div class="ui-block-b" id="book_edit"><span id="book_value">12</span>冊</div>
@@ -167,27 +202,38 @@
       	<div class="ui-block-a">研究</div>
       	<div class="ui-block-b" id="study_edit"><span id="study_value">1</span>件</div>
       </div>
-
-    %= stylesheet begin
-      #number-input-popup {
-        /* display:none; */
-        background-color:white;
-        border:1px gray solid;
-        height:136px;
-        width:130px;
-        text-align:center;
-        padding:5px;
-        position:absolute;
-      }
-    % end
-    
-    <div id="number-input-popup">
-      <input style="margin: 0px 0px 0px 0px;height:30px;width:99px;display:inline" type="text" >
-  		<div data-role="controlgroup" data-type="horizontal" style="margin-top:0px;margin-bottom:0px;padding:0"> 
-  			<a href="/doc/jquery_mobile/" data-role="button">▼</a> 
-  			<a href="/doc/jquery_mobile/" data-role="button">▲</a> 
-  		</div>
-	    <input type="button" value="更新" data-inline="ture" style="width:99px;margin:0;padding:0;">
-	    <input type="button" value="キャンセル" data-inline="true" data-icon="delete" data-iconpos="notext">
+      <a href="#brochure_edit_page" data-role="button">ブロシュアの編集</a>
     </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    
+	</div>
+  <div data-role="page" id="brochure_edit_page">
+
+    <div data-role="header">
+      <h1>編集</h1>
+    </div>
+
+    <div data-role="content">
+      <h2 style="margin-bottom:15px;margin-top:0px;">ブロシュア</h2>
+      <div style="border:2px #BBBBBB solid; padding:15px 12px">
+        <div class="ui-grid-a">
+        	<div class="ui-block-a"><input type="text" ></div>
+        	<div class="ui-block-b"><span style="line-height:42px;padding-left:18px;font-size:160%">冊</span></div>
+        </div>
+      	<div style="margin-top:9px">
+          <span data-role="controlgroup" data-type="horizontal">
+            <input type="button" value="▼">
+            <input type="button" value="▲">
+          </span>
+        </div>
+      </div>
+      <div class="ui-grid-a" style="margin-top:7px">
+      	<div class="ui-block-a"><input type="button" value="OK" data-icon="star"></div>
+      	<div class="ui-block-b"><a href="#home" data-role="button" data-rel="back">戻る</a></div>
+      </div>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
   </div>
