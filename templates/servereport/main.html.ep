@@ -92,6 +92,7 @@
         var button_id = opts.button_id;
         var value_id = opts.value_id;
         
+        // コンポーネント
         var html =
           '<div data-role="page" id="' + page_id + '">' +
             '<div data-role="header" data-theme="b">' +
@@ -101,9 +102,9 @@
               '<h2 style="margin-bottom:15px;margin-top:0px;">' + title + '</h2>' +
               '<div style="border:2px #BBBBBB solid; padding:15px 12px">' +
                 '<div class="ui-grid-b">' +
-                	'<div class="ui-block-a" style="width:47%"><input type="text" readonly class="TimeInputPage-input-hour" value="0"></div>' +
+                	'<div class="ui-block-a" style="width:47%"><input type="text" readonly class="TimeInputPage-hour-input" value="0"></div>' +
                 	'<div class="ui-block-b" style="width:6%;text-align:center;line-height:40px;font-size:150%"><b>:</b></div>' +
-                	'<div class="ui-block-c" style="width:47%"><input type="text" readonly class="TimeInputPage-input-min" value="0"></div>' +
+                	'<div class="ui-block-c" style="width:47%"><input type="text" readonly class="TimeInputPage-min-input" value="0"></div>' +
                 '</div>' +
                 '<div class="ui-grid-b" style="margin-top:9px">' +
                 	'<div class="ui-block-a" style="width:47%">' +
@@ -128,37 +129,87 @@
             '</div>' +
           '</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>';
           
+          // コントロール
           var page = this.page = $(html);
-          var input_box = this.input_box = page.find('.TimeInputPage-input');
-          var down_btn = this.down_btn = page.find('.TimeInputPage-down');
-          var up_btn = this.up_btn = page.find('.TimeInputPage-up');
+          var hour_input_box = this.hour_input_box = page.find('.TimeInputPage-hour-input');
+          var min_input_box = this.min_input_box = page.find('.TimeInputPage-min-input');
+          var hour_down_btn = this.hour_down_btn = page.find('.TimeInputPage-hour-down');
+          var hour_up_btn = this.hour_up_btn = page.find('.TimeInputPage-hour-up');
+          var min_down_btn = this.min_down_btn = page.find('.TimeInputPage-min-down');
+          var min_up_btn = this.min_up_btn = page.find('.TimeInputPage-min-up');
           var ok_btn = this.ok_btn = page.find('.TimeInputPage-ok');
           
-          down_btn.on('click', function () {
-            var value = input_box.val();
+          // 時間ダウン
+          hour_down_btn.on('click', function () {
+            var value = hour_input_box.val();
             value = +value;
-            if (value !== 0) {
+            if (value === 0) {
+              value = 23;
+            }
+            else {
               value = value - 1;
             }
-            input_box.val(value);
+            hour_input_box.val(value);
           });
           
-          up_btn.on('click', function () {
-            var value = input_box.val();
+          // 時間アップ
+          hour_up_btn.on('click', function () {
+            var value = hour_input_box.val();
             value = +value;
-            value = value + 1;
-            input_box.val(value);
+            if (value === 23) {
+              value = 0;
+            }
+            else {
+              value = value + 1;
+            }
+            hour_input_box.val(value);
           });
-
+          
+          // 分ダウン
+          min_down_btn.on('click', function () {
+            var value = min_input_box.val();
+            value = +value;
+            if (value === 0) {
+              value = 55;
+            }
+            else {
+              value = value - 5;
+            }
+            if (value < 10) {
+              value = '0' + value;
+            }
+            min_input_box.val(value);
+          });
+          
+          // 分アップ
+          min_up_btn.on('click', function () {
+            var value = min_input_box.val();
+            value = +value;
+            if (value === 55) {
+              value = 0;
+            }
+            else {
+              value = value + 5;
+            }
+            if (value < 10) {
+              value = '0' + value;
+            }
+            min_input_box.val(value);
+          });
+          
+          // ページ表示
           $('#' + button_id).on('click', function () {
             $(this).css('background-color', '#7CA5F0')
             setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
-            time_input_page.input_box.val($('#' + value_id).text());
+            time_input_page.hour_input_box.val($('#' + value_id.hour).text());
+            time_input_page.min_input_box.val($('#' + value_id.min).text());
             $.mobile.changePage('#' + page_id);
           });
           
+          // OK
           ok_btn.on('click', function () {
-            $('#' + value_id).text(time_input_page.input_box.val());
+            $('#' + value_id.hour).text(time_input_page.hour_input_box.val());
+            $('#' + value_id.min).text(time_input_page.min_input_box.val());
             $('#' + button_id).css('background-color', '#7CA5F0')
             setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
           });
@@ -189,7 +240,7 @@
         page_id : 'time_edit_page',
         page_title:  '時間の編集',
         button_id: 'time_edit',
-        value_id: 'time_value'
+        value_id: {hour: 'time_hour_value', min: 'time_min_value'}
       });
       number_input_page.page.appendTo('body');
 
@@ -247,7 +298,7 @@
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">時間</div>
-      	<div class="ui-block-b" id="time_edit"><span id="time_value">2:45</span></div>
+      	<div class="ui-block-b" id="time_edit"><span id="time_hour_value">2</span>:<span id="time_min_value">45</span></div>
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">雑誌</div>
