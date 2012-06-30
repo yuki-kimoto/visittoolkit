@@ -102,19 +102,19 @@
               '<h2 style="margin-bottom:15px;margin-top:0px;">' + title + '</h2>' +
               '<div style="border:2px #BBBBBB solid; padding:15px 12px">' +
                 '<div class="ui-grid-b">' +
-                	'<div class="ui-block-a" style="width:47%"><input type="text" readonly class="TimeInputPage-hour-input" value="0"></div>' +
-                	'<div class="ui-block-b" style="width:6%;text-align:center;line-height:40px;font-size:150%"><b>:</b></div>' +
-                	'<div class="ui-block-c" style="width:47%"><input type="text" readonly class="TimeInputPage-min-input" value="0"></div>' +
+                	'<div class="ui-block-a" style="width:40%"><input type="text" readonly class="TimeInputPage-hour-input" value="0"></div>' +
+                	'<div class="ui-block-b" style="width:10%;text-align:center;line-height:40px;font-size:150%;padding-left:9px;"><b>:</b></div>' +
+                	'<div class="ui-block-c" style="width:40%"><input type="text" readonly class="TimeInputPage-min-input" value="0"></div>' +
                 '</div>' +
                 '<div class="ui-grid-b" style="margin-top:9px">' +
-                	'<div class="ui-block-a" style="width:47%">' +
+                	'<div class="ui-block-a" style="width:45%">' +
                     '<span data-role="controlgroup" data-type="horizontal">' +
                       '<input type="button" class="TimeInputPage-hour-down" value="▼">' +
                       '<input type="button" class="TimeInputPage-hour-up" value="▲">' +
                     '</span>' +
                 	'</div>' +
-                	'<div class="ui-block-b" style="width:6%;"></div>' +
-                	'<div class="ui-block-c" style="width:47%">' +
+                	'<div class="ui-block-b" style="width:8%;"></div>' +
+                	'<div class="ui-block-c" style="width:45%">' +
                     '<span data-role="controlgroup" data-type="horizontal">' +
                       '<input type="button" class="TimeInputPage-min-down" value="▼">' +
                       '<input type="button" class="TimeInputPage-min-up" value="▲">' +
@@ -247,7 +247,7 @@
       // 雑誌の編集
       var number_input_page = new NumberInputPage({
         page_id : 'magazine_edit_page',
-        page_title:  '書籍の編集',
+        page_title:  '雑誌の編集',
         unit_suffix:  '冊',
         button_id: 'magazine_edit',
         value_id: 'magazine_value'
@@ -257,7 +257,7 @@
       // 再訪問の編集
       var number_input_page = new NumberInputPage({
         page_id : 'return_visit_edit_page',
-        page_title:  '書籍の編集',
+        page_title:  '再訪問の編集',
         unit_suffix:  '件',
         button_id: 'return_visit_edit',
         value_id: 'return_visit_value'
@@ -267,7 +267,7 @@
       // 研究の編集
       var number_input_page = new NumberInputPage({
         page_id : 'study_edit_page',
-        page_title:  '書籍の編集',
+        page_title:  '研究の編集',
         unit_suffix:  '件',
         button_id: 'study_edit',
         value_id: 'study_value'
