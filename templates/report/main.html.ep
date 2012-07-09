@@ -275,7 +275,24 @@
       number_input_page.page.appendTo('body');
     });
    % end
+
+  <%
+    use DateTime::Format::Strptime;
+    # 現在の年月
+    my $date = $self->param('date');
+    my %opts = (time_zone => 'local', locale => 'ja');
+    my $current_dt
+      = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
+      || DateTime->now(%opts);
+    $current_dt->locale('ja');
     
+    # 前の日
+    my $prev_dt = $current_dt->clone->add(days => -1);
+    
+    # 次の日
+    my $next_dt = $current_dt->clone->add(days => 1);
+  %>
+
   <div data-role="page" id="home">
   	<div data-role="header">
   		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>

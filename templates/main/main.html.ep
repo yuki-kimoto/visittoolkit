@@ -5,9 +5,9 @@
 	</div>
 	<div data-role="content">
     <ul data-role="listview">
-    	<li><a href="<%= url_for('/visitrecord') %>">訪問記録</a></li>
-    	<li><a href="<%= url_for('/servereport') %>">奉仕報告(日表示)</a></li>
-    	<li><a href="<%= url_for('/servereport/month') %>">奉仕報告(月表示)</a></li>
+    	<!-- <li><a href="<%= url_for('/visit') %>">訪問記録</a></li> -->
+    	<li><a href="<%= url_for('/report') %>">奉仕報告(日表示)</a></li>
+    	<li><a href="<%= url_for('/report/month') %>">奉仕報告(月表示)</a></li>
     </ul>
   </div>
   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

@@ -1,5 +1,22 @@
 % layout 'common', title => '奉仕報告';
 
+  <%
+    use DateTime::Format::Strptime;
+    
+    # 現在の年月
+    my $month = $self->param('month');
+    my %opts = (time_zone => 'local', locale => 'ja');
+    my $current_dt
+      = DateTime::Format::Strptime->new(pattern => "%Y%m", %opts)->parse_datetime($month)
+      || DateTime->now(%opts);
+    
+    # 前の月
+    my $prev_dt = $current_dt->clone->add(months => -1, end_of_month => 'limit');
+    
+    # 次の月
+    my $next_dt = $current_dt->clone->add(months => 1, end_of_month => 'limit');
+  %>
+  
 	<div data-role="header">
 		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
 		<h1>奉仕報告</h1>
