@@ -77,6 +77,10 @@ sub startup {
     # User
     {
       table => 'user'
+    },
+    # Report
+    {
+      table => 'serve_report_date'
     }
   ];
   $dbi->create_model($_) for @$models;
@@ -162,10 +166,15 @@ sub startup {
       }
     }
   }
-
-  $r->get('/')->to('main#main');
-  $r->get('/:controller')->to('#main');
-  $r->get('/:controller/:action');
+  
+  # Web API
+  {
+    my $r = $r->route('/api')->to('webapi#');
+    $r->post('/report/update')->to('#report_update');
+  }
+  
+  
+  $self->plugin('AutoRoute', {ignore => ['layouts']});
 }
 
 1;

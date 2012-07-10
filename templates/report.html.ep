@@ -1,0 +1,366 @@
+% layout 'common', title => '奉仕報告';
+  %= stylesheet begin
+   #home .ui-grid-a {
+     height:45px;
+     font-size:120%;
+   }
+   
+   #home #content .ui-block-a, #home #content .ui-block-b {
+     line-height:45px;
+   }
+  % end
+
+  %= javascript begin
+    $('#home').live('pageinit', function () {
+      
+      // 数値入力ページ
+      var NumberInputPage = function (opts) {
+        var number_input_page = this;
+        var page_id = opts.page_id;
+        var title = opts.page_title;
+        var suffix = opts.unit_suffix;
+        var button_id = opts.button_id;
+        var value_id = opts.value_id;
+        var param_name = opts.param_name;
+        var api = opts.api;
+        
+        var html =
+          '<div data-role="page" id="' + page_id + '">' +
+            '<div data-role="header" data-theme="b">' +
+              '<h1>編集</h1>' +
+            '</div>' +
+            '<div data-role="content">' +
+              '<h2 style="margin-bottom:15px;margin-top:0px;">' + title + '</h2>' +
+              '<div style="border:2px #BBBBBB solid; padding:15px 12px">' +
+                '<div class="ui-grid-a">' +
+                	'<div class="ui-block-a"><input type="text" readonly class="NumberInputPage-input" value="0"></div>' +
+                	'<div class="ui-block-b"><span style="line-height:42px;padding-left:18px;font-size:160%">' + suffix + '</span></div>' +
+                '</div>' +
+              	'<div style="margin-top:9px">' +
+                  '<span data-role="controlgroup" data-type="horizontal">' +
+                    '<input type="button" class="NumberInputPage-down" value="▼">' +
+                    '<input type="button" class="NumberInputPage-up" value="▲">' +
+                  '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ui-grid-a" style="margin-top:7px">' +
+                '<div class="ui-block-a"><a href="#home" data-role="button" class="NumberInputPage-ok" data-rel="back" data-icon="star">OK</a></div>' +
+                '<div class="ui-block-b"><a href="#home" data-role="button" class="NumberInputPage-cancel" data-rel="back" data-icon="back">戻る</a></div>' +
+              '</div>' +
+            '</div>' +
+          '</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>';
+          
+        var page = this.page = $(html);
+        var input_box = this.input_box = page.find('.NumberInputPage-input');
+        var down_btn = this.down_btn = page.find('.NumberInputPage-down');
+        var up_btn = this.up_btn = page.find('.NumberInputPage-up');
+        var ok_btn = this.ok_btn = page.find('.NumberInputPage-ok');
+        
+        down_btn.on('click', function () {
+          var value = input_box.val();
+          value = +value;
+          if (value !== 0) {
+            value = value - 1;
+          }
+          input_box.val(value);
+        });
+        
+        up_btn.on('click', function () {
+          var value = input_box.val();
+          value = +value;
+          value = value + 1;
+          input_box.val(value);
+        });
+
+        $('#' + button_id).on('click', function () {
+          $(this).css('background-color', '#7CA5F0')
+          setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
+          number_input_page.input_box.val($('#' + value_id).text());
+          $.mobile.changePage('#' + page_id);
+        });
+        
+        ok_btn.on('click', function () {
+          var value = number_input_page.input_box.val();
+          var params = {};
+          params[param_name] = value;
+          $.post(api, params, function (result) {
+            if (result.ok) {
+              $('#' + value_id).text(value);
+              $('#' + button_id).css('background-color', '#7CA5F0')
+              setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
+              history.back();
+            }
+            else {
+              var message = 'Error';
+              % if ($self->app->mode eq 'development') {
+                message = message + ': ' + JSON.stringify(result);
+              % }
+              alert(message);
+            }
+          });
+          return false;
+        });
+      };
+
+      // 時刻入力ページ
+      var TimeInputPage = function (opts) {
+        var time_input_page = this;
+        var page_id = opts.page_id;
+        var title = opts.page_title;
+        var button_id = opts.button_id;
+        var value_id = opts.value_id;
+        
+        // コンポーネント
+        var html =
+          '<div data-role="page" id="' + page_id + '">' +
+            '<div data-role="header" data-theme="b">' +
+              '<h1>編集</h1>' +
+            '</div>' +
+            '<div data-role="content">' +
+              '<h2 style="margin-bottom:15px;margin-top:0px;">' + title + '</h2>' +
+              '<div style="border:2px #BBBBBB solid; padding:15px 12px">' +
+                '<div class="ui-grid-b">' +
+                	'<div class="ui-block-a" style="width:40%"><input type="text" readonly class="TimeInputPage-hour-input" value="0"></div>' +
+                	'<div class="ui-block-b" style="width:10%;text-align:center;line-height:40px;font-size:150%;padding-left:9px;"><b>:</b></div>' +
+                	'<div class="ui-block-c" style="width:40%"><input type="text" readonly class="TimeInputPage-min-input" value="0"></div>' +
+                '</div>' +
+                '<div class="ui-grid-b" style="margin-top:9px">' +
+                	'<div class="ui-block-a" style="width:45%">' +
+                    '<span data-role="controlgroup" data-type="horizontal">' +
+                      '<input type="button" class="TimeInputPage-hour-down" value="▼">' +
+                      '<input type="button" class="TimeInputPage-hour-up" value="▲">' +
+                    '</span>' +
+                	'</div>' +
+                	'<div class="ui-block-b" style="width:8%;"></div>' +
+                	'<div class="ui-block-c" style="width:45%">' +
+                    '<span data-role="controlgroup" data-type="horizontal">' +
+                      '<input type="button" class="TimeInputPage-min-down" value="▼">' +
+                      '<input type="button" class="TimeInputPage-min-up" value="▲">' +
+                    '</span>' +
+                	'</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ui-grid-a" style="margin-top:7px">' +
+                '<div class="ui-block-a"><a href="#home" data-role="button" class="TimeInputPage-ok" data-rel="back" data-icon="star">OK</a></div>' +
+                '<div class="ui-block-b"><a href="#home" data-role="button" class="TimeInputPage-cancel" data-rel="back" data-icon="back">戻る</a></div>' +
+              '</div>' +
+            '</div>' +
+          '</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>';
+          
+          // コントロール
+          var page = this.page = $(html);
+          var hour_input_box = this.hour_input_box = page.find('.TimeInputPage-hour-input');
+          var min_input_box = this.min_input_box = page.find('.TimeInputPage-min-input');
+          var hour_down_btn = this.hour_down_btn = page.find('.TimeInputPage-hour-down');
+          var hour_up_btn = this.hour_up_btn = page.find('.TimeInputPage-hour-up');
+          var min_down_btn = this.min_down_btn = page.find('.TimeInputPage-min-down');
+          var min_up_btn = this.min_up_btn = page.find('.TimeInputPage-min-up');
+          var ok_btn = this.ok_btn = page.find('.TimeInputPage-ok');
+          
+          // 時間ダウン
+          hour_down_btn.on('click', function () {
+            var value = hour_input_box.val();
+            value = +value;
+            if (value === 0) {
+              value = 23;
+            }
+            else {
+              value = value - 1;
+            }
+            hour_input_box.val(value);
+          });
+          
+          // 時間アップ
+          hour_up_btn.on('click', function () {
+            var value = hour_input_box.val();
+            value = +value;
+            if (value === 23) {
+              value = 0;
+            }
+            else {
+              value = value + 1;
+            }
+            hour_input_box.val(value);
+          });
+          
+          // 分ダウン
+          min_down_btn.on('click', function () {
+            var value = min_input_box.val();
+            value = +value;
+            if (value === 0) {
+              value = 55;
+            }
+            else {
+              value = value - 5;
+            }
+            if (value < 10) {
+              value = '0' + value;
+            }
+            min_input_box.val(value);
+          });
+          
+          // 分アップ
+          min_up_btn.on('click', function () {
+            var value = min_input_box.val();
+            value = +value;
+            if (value === 55) {
+              value = 0;
+            }
+            else {
+              value = value + 5;
+            }
+            if (value < 10) {
+              value = '0' + value;
+            }
+            min_input_box.val(value);
+          });
+          
+          // ページ表示
+          $('#' + button_id).on('click', function () {
+            $(this).css('background-color', '#7CA5F0')
+            setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
+            time_input_page.hour_input_box.val($('#' + value_id.hour).text());
+            time_input_page.min_input_box.val($('#' + value_id.min).text());
+            $.mobile.changePage('#' + page_id);
+          });
+          
+          // OK
+          ok_btn.on('click', function () {
+            $('#' + value_id.hour).text(time_input_page.hour_input_box.val());
+            $('#' + value_id.min).text(time_input_page.min_input_box.val());
+            $('#' + button_id).css('background-color', '#7CA5F0')
+            setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
+          });
+      };
+
+      // 書籍の編集
+      var number_input_page = new NumberInputPage({
+        page_id : 'book_edit_page',
+        page_title:  '書籍の編集',
+        unit_suffix:  '冊',
+        button_id: 'book_edit',
+        value_id: 'book_value',
+        param_name: 'book',
+        api: "<%= url_for('/api/report/update') %>"
+      });
+      number_input_page.page.appendTo('body');
+      
+      // ブロシュアの編集
+      var number_input_page = new NumberInputPage({
+        page_id : 'brochure_edit_page',
+        page_title:  'ブロシュアの編集',
+        unit_suffix:  '冊',
+        button_id: 'brochure_edit',
+        value_id: 'brochure_value',
+        param_name: 'brochure',
+        api: "<%= url_for('/api/report/update') %>"
+      });
+      number_input_page.page.appendTo('body');
+
+      // 時間の編集
+      var number_input_page = new TimeInputPage({
+        page_id : 'time_edit_page',
+        page_title:  '時間の編集',
+        button_id: 'time_edit',
+        value_id: {hour: 'time_hour_value', min: 'time_min_value'},
+        param_name: 'time',
+        api: "<%= url_for('/api/report/update') %>"
+      });
+      number_input_page.page.appendTo('body');
+
+      // 雑誌の編集
+      var number_input_page = new NumberInputPage({
+        page_id : 'magazine_edit_page',
+        page_title:  '雑誌の編集',
+        unit_suffix:  '冊',
+        button_id: 'magazine_edit',
+        value_id: 'magazine_value',
+        param_name: 'magazine',
+        api: "<%= url_for('/api/report/update') %>"
+      });
+      number_input_page.page.appendTo('body');
+
+      // 再訪問の編集
+      var number_input_page = new NumberInputPage({
+        page_id : 'return_visit_edit_page',
+        page_title:  '再訪問の編集',
+        unit_suffix:  '件',
+        button_id: 'return_visit_edit',
+        value_id: 'return_visit_value',
+        param_name: 'return_visit',
+        api: "<%= url_for('/api/report/update') %>"
+      });
+      number_input_page.page.appendTo('body');
+
+      // 研究の編集
+      var number_input_page = new NumberInputPage({
+        page_id : 'study_edit_page',
+        page_title:  '研究の編集',
+        unit_suffix:  '件',
+        button_id: 'study_edit',
+        value_id: 'study_value',
+        param_name: 'study',
+        api: "<%= url_for('/api/report/update') %>"
+      });
+      number_input_page.page.appendTo('body');
+    });
+   % end
+
+  <%
+    use DateTime::Format::Strptime;
+    # 現在の年月
+    my $date = $self->param('date');
+    my %opts = (time_zone => 'local', locale => 'ja');
+    my $current_dt
+      = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
+      || DateTime->now(%opts);
+    $current_dt->locale('ja');
+    
+    # 前の日
+    my $prev_dt = $current_dt->clone->add(days => -1);
+    
+    # 次の日
+    my $next_dt = $current_dt->clone->add(days => 1);
+  %>
+
+  <div data-role="page" id="home">
+  	<div data-role="header">
+  		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
+  		<h1>奉仕報告</h1>
+  	</div>
+    <div class="ui-grid-b" style="border-bottom:1px gray solid">
+    	<div class="ui-block-a" style="width:10%;text-align:left"><a href="<%= url_for->query(date => $prev_dt->strftime('%Y%m%d')) %>" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-transition="slide" data-direction="reverse">前の日</a></div>
+    	<div class="ui-block-b" style="width:80%;text-align:center; padding-top:12px;"><%= $current_dt->strftime('%Y年%m月%d日(%a)') %></div>
+    	<div class="ui-block-c" style="width:10%;text-align:right"><a href="<%= url_for->query(date => $next_dt->strftime('%Y%m%d')) %>" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-transition="slide">次の日</a></div>
+    </div>
+
+  	<div data-role="content" id="content">
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">書籍</div>
+      	<div class="ui-block-b" id="book_edit"><span id="book_value">12</span>冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">ブロシュア</div>
+      	<div class="ui-block-b" id="brochure_edit"><span id="brochure_value">10</span>冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">時間</div>
+      	<div class="ui-block-b" id="time_edit"><span id="time_hour_value">2</span>:<span id="time_min_value">45</span></div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">雑誌</div>
+      	<div class="ui-block-b" id="magazine_edit"><span id="magazine_value">20</span>冊</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">再訪問</div>
+      	<div class="ui-block-b" id="return_visit_edit"><span id="return_visit_value">12</span>件</div>
+      </div>
+      <div class="ui-grid-a">
+      	<div class="ui-block-a">研究</div>
+      	<div class="ui-block-b" id="study_edit"><span id="study_value">1</span>件</div>
+      </div>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    
+	</div>
+
