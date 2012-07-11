@@ -8,6 +8,7 @@ use Validator::Custom;
 use Visittoolkit::Util;
 use Carp 'croak';
 use Visittoolkit::API;
+use Time::Piece;
 
 has util => sub { Visittoolkit::Util->new(app => shift) };
 has validator => sub { Validator::Custom->new };
@@ -80,10 +81,37 @@ sub startup {
     },
     # Report
     {
-      table => 'serve_report_date'
+      table => 'serve_report_date',
+      primary_key => 'date'
     }
   ];
   $dbi->create_model($_) for @$models;
+  $dbi->setup_model;
+  
+  $dbi->register_filter(
+    tp_to_date => sub {
+        my $tp = shift;
+        
+        return '' unless defined $tp;
+        return $tp unless ref $tp;
+        return $tp->strftime('%Y-%m-%d');
+    },
+    date_to_tp => sub {
+        my $date = shift;
+        
+        return unless $date;
+        return localtime Time::Piece->strptime($date, '%Y-%m-%d');
+    }
+  );
+  
+  $dbi->type_rule(
+    into1 => {
+      date => 'tp_to_date'
+    },
+    from1 => {
+      date => 'date_to_tp'
+    }
+  );
   
   # Validator;
   my $vc = $self->validator;
@@ -115,7 +143,13 @@ sub startup {
     });
 
     # SQLite viewer (only development)
-    $self->plugin('SQLiteViewerLite', dbi => $dbi)
+    my $viewer_dbi = DBIx::Custom->connect(
+      dsn => "dbi:SQLite:$dbpath",
+      option => {sqlite_unicode => 1},
+      connector => 1
+    );
+
+    $self->plugin('SQLiteViewerLite', dbi => $viewer_dbi)
       if $self->mode eq 'development';
     
     # Main

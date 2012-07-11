@@ -10,6 +10,24 @@
    }
   % end
 
+  <%
+    use DateTime::Format::Strptime;
+    # 現在の年月
+    my $date = $self->param('date');
+    my %opts = (time_zone => 'local', locale => 'ja');
+    my $current_dt
+      = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
+      || DateTime->now(%opts);
+    $current_dt->locale('ja');
+    $date = $current_dt->strftime("%Y%m%d");
+    
+    # 前の日
+    my $prev_dt = $current_dt->clone->add(days => -1);
+    
+    # 次の日
+    my $next_dt = $current_dt->clone->add(days => 1);
+  %>
+
   %= javascript begin
     $('#home').live('pageinit', function () {
       
@@ -23,6 +41,7 @@
         var value_id = opts.value_id;
         var param_name = opts.param_name;
         var api = opts.api;
+        var date = opts.date;
         
         var html =
           '<div data-role="page" id="' + page_id + '">' +
@@ -83,6 +102,7 @@
           var value = number_input_page.input_box.val();
           var params = {};
           params[param_name] = value;
+          params.date = date;
           $.post(api, params, function (result) {
             if (result.ok) {
               $('#' + value_id).text(value);
@@ -241,7 +261,8 @@
         button_id: 'book_edit',
         value_id: 'book_value',
         param_name: 'book',
-        api: "<%= url_for('/api/report/update') %>"
+        api: "<%= url_for('/api/report/update') %>",
+        date: "<%= $date %>"
       });
       number_input_page.page.appendTo('body');
       
@@ -253,7 +274,8 @@
         button_id: 'brochure_edit',
         value_id: 'brochure_value',
         param_name: 'brochure',
-        api: "<%= url_for('/api/report/update') %>"
+        api: "<%= url_for('/api/report/update') %>",
+        date: "<%= $date %>"
       });
       number_input_page.page.appendTo('body');
 
@@ -264,7 +286,8 @@
         button_id: 'time_edit',
         value_id: {hour: 'time_hour_value', min: 'time_min_value'},
         param_name: 'time',
-        api: "<%= url_for('/api/report/update') %>"
+        api: "<%= url_for('/api/report/update') %>",
+        date: "<%= $date %>"
       });
       number_input_page.page.appendTo('body');
 
@@ -276,7 +299,8 @@
         button_id: 'magazine_edit',
         value_id: 'magazine_value',
         param_name: 'magazine',
-        api: "<%= url_for('/api/report/update') %>"
+        api: "<%= url_for('/api/report/update') %>",
+        date: "<%= $date %>"
       });
       number_input_page.page.appendTo('body');
 
@@ -288,7 +312,8 @@
         button_id: 'return_visit_edit',
         value_id: 'return_visit_value',
         param_name: 'return_visit',
-        api: "<%= url_for('/api/report/update') %>"
+        api: "<%= url_for('/api/report/update') %>",
+        date: "<%= $date %>"
       });
       number_input_page.page.appendTo('body');
 
@@ -300,28 +325,12 @@
         button_id: 'study_edit',
         value_id: 'study_value',
         param_name: 'study',
-        api: "<%= url_for('/api/report/update') %>"
+        api: "<%= url_for('/api/report/update') %>",
+        date: "<%= $date %>"
       });
       number_input_page.page.appendTo('body');
     });
    % end
-
-  <%
-    use DateTime::Format::Strptime;
-    # 現在の年月
-    my $date = $self->param('date');
-    my %opts = (time_zone => 'local', locale => 'ja');
-    my $current_dt
-      = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
-      || DateTime->now(%opts);
-    $current_dt->locale('ja');
-    
-    # 前の日
-    my $prev_dt = $current_dt->clone->add(days => -1);
-    
-    # 次の日
-    my $next_dt = $current_dt->clone->add(days => 1);
-  %>
 
   <div data-role="page" id="home">
   	<div data-role="header">

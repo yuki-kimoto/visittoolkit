@@ -5,11 +5,13 @@ sub report_update {
   my $self = shift;
   
   my $raw_params = $self->req->body_params->to_hash;
-  warn $self->dumper($raw_params);
   
   my $validator = $self->app->validator;
   
   my $rule = [
+    date => [
+      'date_to_timepiece'
+    ],
     book => {require => 0} => [
       'uint'
     ],
@@ -35,13 +37,14 @@ sub report_update {
     unless $vresult->is_ok;
   
   my $params = $vresult->data;
+  my $date = delete $params->{date};
   return $self->render(json => {ok => 0, error => 'no_param'})
     unless keys %$params;
   
   my $dbi = $self->app->dbi;
   my $mreport = $dbi->model('serve_report_date');
   
-  eval { $mreport->insert($params) };
+  $mreport->update_or_insert($params, id => $date);
   
   return $self->render(json => {ok => 0, error => "db_error: $@"}) if $@;
   
