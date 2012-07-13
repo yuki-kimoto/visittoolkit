@@ -1,4 +1,28 @@
+<%
+  use DateTime::Format::Strptime;
+  # 現在の年月
+  my $date = $self->param('date');
+  my %opts = (time_zone => 'local', locale => 'ja');
+  my $current_dt
+    = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
+    || DateTime->now(%opts);
+  $date = $current_dt->strftime("%Y%m%d");
+  
+  # 前の日
+  my $prev_dt = $current_dt->clone->add(days => -1);
+  
+  # 次の日
+  my $next_dt = $current_dt->clone->add(days => 1);
+  
+  my $dbi = $self->app->dbi;
+  my $mreport = $dbi->model('serve_report_date');
+  my $report = $mreport->select(where => {date => $current_dt})->one || {};
+  my ($time_hour) = ($report->{time} // '') =~ /^(\d+):/;
+  my ($time_min) = ($report->{time} // '') =~ /:(\d+)$/;
+%>
+
 % layout 'common', title => '奉仕報告';
+
   %= stylesheet begin
    #home .ui-grid-a {
      height:45px;
@@ -9,23 +33,6 @@
      line-height:45px;
    }
   % end
-
-  <%
-    use DateTime::Format::Strptime;
-    # 現在の年月
-    my $date = $self->param('date');
-    my %opts = (time_zone => 'local', locale => 'ja');
-    my $current_dt
-      = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
-      || DateTime->now(%opts);
-    $date = $current_dt->strftime("%Y%m%d");
-    
-    # 前の日
-    my $prev_dt = $current_dt->clone->add(days => -1);
-    
-    # 次の日
-    my $next_dt = $current_dt->clone->add(days => 1);
-  %>
 
   %= javascript begin
     $('#home').live('pageinit', function () {
@@ -367,27 +374,27 @@
   	<div data-role="content" id="content">
       <div class="ui-grid-a">
       	<div class="ui-block-a">書籍</div>
-      	<div class="ui-block-b" id="book_edit"><span id="book_value">12</span>冊</div>
+      	<div class="ui-block-b" id="book_edit"><span id="book_value"><%= $report->{book} // 0 %></span>冊</div>
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">ブロシュア</div>
-      	<div class="ui-block-b" id="brochure_edit"><span id="brochure_value">10</span>冊</div>
+      	<div class="ui-block-b" id="brochure_edit"><span id="brochure_value"><%= $report->{brochure} // 0 %></span>冊</div>
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">時間</div>
-      	<div class="ui-block-b" id="time_edit"><span id="time_hour_value">2</span>:<span id="time_min_value">45</span></div>
+      	<div class="ui-block-b" id="time_edit"><span id="time_hour_value"><%= $time_hour // '0' %></span>:<span id="time_min_value"><%= $time_min // '00' %></span></div>
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">雑誌</div>
-      	<div class="ui-block-b" id="magazine_edit"><span id="magazine_value">20</span>冊</div>
+      	<div class="ui-block-b" id="magazine_edit"><span id="magazine_value"><%= $report->{magazine} // 0 %></span>冊</div>
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">再訪問</div>
-      	<div class="ui-block-b" id="return_visit_edit"><span id="return_visit_value">12</span>件</div>
+      	<div class="ui-block-b" id="return_visit_edit"><span id="return_visit_value"><%= $report->{return_visit} // 0 %></span>件</div>
       </div>
       <div class="ui-grid-a">
       	<div class="ui-block-a">研究</div>
-      	<div class="ui-block-b" id="study_edit"><span id="study_value">1</span>件</div>
+      	<div class="ui-block-b" id="study_edit"><span id="study_value"><%= $report->{study} // 0 %></span>件</div>
       </div>
     </div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
