@@ -18,7 +18,6 @@
     my $current_dt
       = DateTime::Format::Strptime->new(pattern => "%Y%m%d", %opts)->parse_datetime($date)
       || DateTime->now(%opts);
-    $current_dt->locale('ja');
     $date = $current_dt->strftime("%Y%m%d");
     
     # 前の日
@@ -129,6 +128,9 @@
         var title = opts.page_title;
         var button_id = opts.button_id;
         var value_id = opts.value_id;
+        var param_name = opts.param_name;
+        var api = opts.api;
+        var date = opts.date;
         
         // コンポーネント
         var html =
@@ -167,90 +169,109 @@
             '</div>' +
           '</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>';
           
-          // コントロール
-          var page = this.page = $(html);
-          var hour_input_box = this.hour_input_box = page.find('.TimeInputPage-hour-input');
-          var min_input_box = this.min_input_box = page.find('.TimeInputPage-min-input');
-          var hour_down_btn = this.hour_down_btn = page.find('.TimeInputPage-hour-down');
-          var hour_up_btn = this.hour_up_btn = page.find('.TimeInputPage-hour-up');
-          var min_down_btn = this.min_down_btn = page.find('.TimeInputPage-min-down');
-          var min_up_btn = this.min_up_btn = page.find('.TimeInputPage-min-up');
-          var ok_btn = this.ok_btn = page.find('.TimeInputPage-ok');
+        // コントロール
+        var page = this.page = $(html);
+        var hour_input_box = this.hour_input_box = page.find('.TimeInputPage-hour-input');
+        var min_input_box = this.min_input_box = page.find('.TimeInputPage-min-input');
+        var hour_down_btn = this.hour_down_btn = page.find('.TimeInputPage-hour-down');
+        var hour_up_btn = this.hour_up_btn = page.find('.TimeInputPage-hour-up');
+        var min_down_btn = this.min_down_btn = page.find('.TimeInputPage-min-down');
+        var min_up_btn = this.min_up_btn = page.find('.TimeInputPage-min-up');
+        var ok_btn = this.ok_btn = page.find('.TimeInputPage-ok');
+        
+        // 時間ダウン
+        hour_down_btn.on('click', function () {
+          var value = hour_input_box.val();
+          value = +value;
+          if (value === 0) {
+            value = 23;
+          }
+          else {
+            value = value - 1;
+          }
+          hour_input_box.val(value);
+        });
+        
+        // 時間アップ
+        hour_up_btn.on('click', function () {
+          var value = hour_input_box.val();
+          value = +value;
+          if (value === 23) {
+            value = 0;
+          }
+          else {
+            value = value + 1;
+          }
+          hour_input_box.val(value);
+        });
+        
+        // 分ダウン
+        min_down_btn.on('click', function () {
+          var value = min_input_box.val();
+          value = +value;
+          if (value === 0) {
+            value = 55;
+          }
+          else {
+            value = value - 5;
+          }
+          if (value < 10) {
+            value = '0' + value;
+          }
+          min_input_box.val(value);
+        });
+        
+        // 分アップ
+        min_up_btn.on('click', function () {
+          var value = min_input_box.val();
+          value = +value;
+          if (value === 55) {
+            value = 0;
+          }
+          else {
+            value = value + 5;
+          }
+          if (value < 10) {
+            value = '0' + value;
+          }
+          min_input_box.val(value);
+        });
+        
+        // ページ表示
+        $('#' + button_id).on('click', function () {
+          $(this).css('background-color', '#7CA5F0')
+          setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
+          time_input_page.hour_input_box.val($('#' + value_id.hour).text());
+          time_input_page.min_input_box.val($('#' + value_id.min).text());
+          $.mobile.changePage('#' + page_id);
+        });
+        
+        // OK
+        ok_btn.on('click', function () {
+          var hour = time_input_page.hour_input_box.val();
+          var min = time_input_page.min_input_box.val();
           
-          // 時間ダウン
-          hour_down_btn.on('click', function () {
-            var value = hour_input_box.val();
-            value = +value;
-            if (value === 0) {
-              value = 23;
+          var params = {};
+          params[param_name] = hour + ':' + min;
+          params.date = date;
+          $.post(api, params, function (result) {
+            if (result.ok) {
+              $('#' + value_id.hour).text(hour);
+              $('#' + value_id.min).text(min);
+              $('#' + button_id).css('background-color', '#7CA5F0')
+              setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
+              history.back();
             }
             else {
-              value = value - 1;
+              var message = 'Error';
+              % if ($self->app->mode eq 'development') {
+                message = message + ': ' + JSON.stringify(result);
+              % }
+              alert(message);
             }
-            hour_input_box.val(value);
           });
-          
-          // 時間アップ
-          hour_up_btn.on('click', function () {
-            var value = hour_input_box.val();
-            value = +value;
-            if (value === 23) {
-              value = 0;
-            }
-            else {
-              value = value + 1;
-            }
-            hour_input_box.val(value);
-          });
-          
-          // 分ダウン
-          min_down_btn.on('click', function () {
-            var value = min_input_box.val();
-            value = +value;
-            if (value === 0) {
-              value = 55;
-            }
-            else {
-              value = value - 5;
-            }
-            if (value < 10) {
-              value = '0' + value;
-            }
-            min_input_box.val(value);
-          });
-          
-          // 分アップ
-          min_up_btn.on('click', function () {
-            var value = min_input_box.val();
-            value = +value;
-            if (value === 55) {
-              value = 0;
-            }
-            else {
-              value = value + 5;
-            }
-            if (value < 10) {
-              value = '0' + value;
-            }
-            min_input_box.val(value);
-          });
-          
-          // ページ表示
-          $('#' + button_id).on('click', function () {
-            $(this).css('background-color', '#7CA5F0')
-            setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
-            time_input_page.hour_input_box.val($('#' + value_id.hour).text());
-            time_input_page.min_input_box.val($('#' + value_id.min).text());
-            $.mobile.changePage('#' + page_id);
-          });
-          
-          // OK
-          ok_btn.on('click', function () {
-            $('#' + value_id.hour).text(time_input_page.hour_input_box.val());
-            $('#' + value_id.min).text(time_input_page.min_input_box.val());
-            $('#' + button_id).css('background-color', '#7CA5F0')
-            setTimeout(function () { $('#' + button_id).css('background-color', 'transparent') }, 2000);
-          });
+          return false;
+        });
       };
 
       // 書籍の編集

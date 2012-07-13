@@ -8,6 +8,21 @@ sub report_update {
   
   my $validator = $self->app->validator;
   
+  my $time_check = sub {
+    my $value = shift;
+    
+    return unless defined $value;
+    
+    my $is_valid;
+    if ($value =~ /^[0-9]+:[0-5][0-9]$/) {
+      $value =~ s/^0+//;
+      return [1, $value];
+    }
+    else { $is_valid = 0 }
+    
+    return $is_valid;
+  };
+  
   my $rule = [
     date => [
       'date_to_timepiece'
@@ -19,7 +34,7 @@ sub report_update {
       'uint'
     ],
     time => {require => 0} => [
-      'any'
+      $time_check
     ],
     magazine => {require => 0} => [
       'uint'
