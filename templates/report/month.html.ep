@@ -1,22 +1,60 @@
+<%
+  use DateTime::Format::Strptime;
+  
+  # 現在の年月
+  my $month = $self->param('month');
+  my %opts = (time_zone => 'local', locale => 'ja');
+  my $current_dt
+    = DateTime::Format::Strptime->new(pattern => "%Y%m", %opts)->parse_datetime($month)
+    || DateTime->now(%opts);
+  
+  # 前の月
+  my $prev_dt = $current_dt->clone->add(months => -1, end_of_month => 'limit');
+  
+  # 次の月
+  my $next_dt = $current_dt->clone->add(months => 1, end_of_month => 'limit');
+  
+  # 月末日
+  my $last_mday_dt = DateTime->last_day_of_month(year => $current_dt->year, month => $current_dt->mon);
+  
+  # レポート
+  my $month = sprintf('%02d', $current_dt->month);
+  my $mreport = $self->app->dbi->model('serve_report_date');
+  my $result = $mreport->select(
+    ['date as mday', qw/date book brochure time magazine study/],
+    where => [
+      "strftime('%m', date) = :month",
+      {month => $month}
+    ],
+    append => 'order by date'
+  );
+  my $get_mday = sub {
+    my $value = shift;
+    
+    my ($mday) = $value =~ /^\d+-\d+-(\d+)$/;
+    $mday =~ s/^0+//;
+    
+    return $mday;
+  };
+  my $reports = $result->type_rule_off->filter({mday => $get_mday})->kv;
+  
+  # レポート合計
+  my $report_total = {};
+  my @times;
+  for my $mday (keys %$reports) {
+    my $report = $reports->{$mday};
+    $report_total->{book} += $report->{book};
+    $report_total->{brochure} += $report->{brochure};
+    $report_total->{magazine} += $report->{magazine};
+    $report_total->{return_visit} += $report->{return_visit};
+    $report_total->{study} += $report->{study};
+    push @times, $report->{time};
+  }
+  $report_total->{time} = vtk->sum_time(\@times);
+%>
+
 % layout 'common', title => '奉仕報告';
 
-  <%
-    use DateTime::Format::Strptime;
-    
-    # 現在の年月
-    my $month = $self->param('month');
-    my %opts = (time_zone => 'local', locale => 'ja');
-    my $current_dt
-      = DateTime::Format::Strptime->new(pattern => "%Y%m", %opts)->parse_datetime($month)
-      || DateTime->now(%opts);
-    
-    # 前の月
-    my $prev_dt = $current_dt->clone->add(months => -1, end_of_month => 'limit');
-    
-    # 次の月
-    my $next_dt = $current_dt->clone->add(months => 1, end_of_month => 'limit');
-  %>
-  
 	<div data-role="header">
 		<a href="<%= url_for('/') %>" data-role="button" data-icon="home" data-iconpos="notext" data-theme="b">ホーム</a>
 		<h1>奉仕報告</h1>
@@ -27,47 +65,30 @@
   	<div class="ui-block-b" style="width:80%;text-align:center; padding-top:12px;"><%= $current_dt->strftime('%Y年%m月') %></div>
   	<div class="ui-block-c" style="width:10%;text-align:right"><a href="<%= url_for->query(month => $next_dt->strftime('%Y%m')) %>" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-transition="slide">次の日</a></div>
   </div>
-  
-  <%
-  my $reports = [
-    {
-      date => '2012年06月01日',
-      book => 1,
-      brochure => 1,
-      time => '1:00',
-      magazine => 1,
-      return_visit => 1,
-      study => 1
-    },
-    {
-      date => '2012年06月02日',
-      book => 2,
-      brochure => 2,
-      time => '2:00',
-      magazine => 2,
-      return_visit => 2,
-      study => 2
-    },
-    {
-      date => '2012年06月03日',
-      book => 3,
-      brochure => 3,
-      time => '3:00',
-      magazine => 3,
-      return_visit => 3,
-      study => 3
-    }
-  ];
-  %>
-	
-	% for my $report (@$reports) {
-  	<div style="padding:10px"><a data-mini="true" style="margin:0px;" href="<%= url_for('/servereport')->query(date => '20120613') %>"><%= $report->{date} %></a></div>
+    
+  	<div style="padding:10px"><b>月の合計</b></div>
     <div class="ui-grid-b"> 
-    	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">書 <%= $report->{book} %></div></div> 
-    	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">ブ <%= $report->{brochure} %></div></div> 
-    	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">時 <%= $report->{time} %></div></div> 
-    	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">雑 <%= $report->{magazine} %></div></div> 
-    	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">再 <%= $report->{return_visit} %></div></div> 
-    	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">研 <%= $report->{study} %></div></div> 
+    	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">書 <%= $report_total->{book} // 0 %></div></div> 
+    	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">ブ <%= $report_total->{brochure} // 0 %></div></div> 
+    	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">時 <%= $report_total->{time} // '0:00' %></div></div> 
+    	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">雑 <%= $report_total->{magazine} // 0 %></div></div> 
+    	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">再 <%= $report_total->{return_visit} // 0 %></div></div>     	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">研 <%= $report_total->{study} // 0 %></div></div> 
+    </div>
+  
+	% for my $mday (1 .. $last_mday_dt->mday) {
+	  % my $report = $reports->{$mday};
+	  % my $year = $current_dt->year;
+	  % my $mon = $current_dt->mon;
+	  % my $date = "${year}年${mon}月${mday}日";
+	  % my $date_param = "${year}${mon}${mday}";
+	  
+  	<div style="padding:10px"><a data-mini="true" style="margin:0px;" href="<%= url_for('/report')->query(date => $date_param) %>"><%= $date %></a></div>
+    <div class="ui-grid-b"> 
+    	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">書 <%= $report->{book} // 0 %></div></div> 
+    	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">ブ <%= $report->{brochure} // 0 %></div></div> 
+    	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">時 <%= $report->{time} // '0:00' %></div></div> 
+    	<div class="ui-block-a"><div class="ui-bar ui-bar-c" style="height:20px">雑 <%= $report->{magazine} // 0 %></div></div> 
+    	<div class="ui-block-b"><div class="ui-bar ui-bar-c" style="height:20px">再 <%= $report->{return_visit} // 0 %></div></div> 
+    	<div class="ui-block-c"><div class="ui-bar ui-bar-c" style="height:20px">研 <%= $report->{study} // 0 %></div></div> 
     </div>
   % }
