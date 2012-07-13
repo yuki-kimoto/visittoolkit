@@ -125,6 +125,18 @@ sub startup {
   
   # Route
   my $r = $self->routes;
+
+  # SQLite viewer (only development)
+  if ($self->mode eq 'development') {
+  
+    my $viewer_dbi = DBIx::Custom->connect(
+      dsn => "dbi:SQLite:$dbpath",
+      option => {sqlite_unicode => 1},
+      connector => 1
+    );
+
+    $self->plugin('SQLiteViewerLite', dbi => $viewer_dbi);
+  }
   
   # Brige
   {
@@ -142,48 +154,13 @@ sub startup {
       return 1;
     });
 
-    # SQLite viewer (only development)
-    my $viewer_dbi = DBIx::Custom->connect(
-      dsn => "dbi:SQLite:$dbpath",
-      option => {sqlite_unicode => 1},
-      connector => 1
-    );
-
-    $self->plugin('SQLiteViewerLite', dbi => $viewer_dbi)
-      if $self->mode eq 'development';
-    
-    # Main
+    # Route automatically
+    $self->plugin('AutoRoute', {ignore => ['layouts']});
+  
+    # Web API
     {
-      my $r = $r->route->to('main#');
-      
-      # Login
-      $r->get('/login')->to('#login');
-      
-      # Admin
-      $r->get('/admin')->to('#admin');
-      
-      # Setup
-      $r->get('/setup')->to('#setup');
-      
-      # Error dialog
-      $r->get('/error-dialog')->to('#error_dialog');
-    }
-
-    # API
-    {
-      my $r = $r->route('/api')->to('api#');
-
-      # Setup wiki
-      $r->post('/setup')->to('#setup');
-
-      # Edit page
-      $r->post('/edit-page')->to('#edit_page');
-
-      # Preview
-      $r->post('/preview')->to('#preview');
-      
-      # Diff
-      $r->post('/content-diff')->to('#content_diff');
+      my $r = $r->route('/api')->to('webapi#');
+      $r->post('/report/update')->to('#report_update');
 
       if ($self->mode eq 'development') {
         # Initialize wiki
@@ -200,15 +177,6 @@ sub startup {
       }
     }
   }
-  
-  # Web API
-  {
-    my $r = $r->route('/api')->to('webapi#');
-    $r->post('/report/update')->to('#report_update');
-  }
-  
-  
-  $self->plugin('AutoRoute', {ignore => ['layouts']});
 }
 
 1;

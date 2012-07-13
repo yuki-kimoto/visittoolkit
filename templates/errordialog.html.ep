@@ -1,0 +1,9 @@
+% layout 'common', title => 'エラー';
+  
+	<div data-role="header">
+		<h1>エラー</h1>
+	</div>
+	<div data-role="content">
+	  <p><%= param('error') %></p>
+	  <p><a href="#home" data-rel="back" data-role="button" data-inline="true" data-icon="back">OK</a></p>
+  </div>

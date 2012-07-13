@@ -1,0 +1,10 @@
+% layout 'common', title => '訪問記録';
+
+	<div data-role="header">
+		<h1>訪問記録</h1>
+	</div>
+	<div data-role="content">
+    <ul data-role="listview">
+      あああ
+    </ul>
+  </div>
