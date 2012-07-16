@@ -1,11 +1,52 @@
+<%
+  use Digest::MD5 'md5_hex';
+  
+  my $state;
+  my $operation = param('op');
+  
+  # ログイン
+  if ($operation eq 'login') {
+    my $user = param('username') // '';
+    my $password = param('password') // '';
+    $password = md5_hex $password;
+    
+    my $dbi = $self->app->dbi;
+    my $muser = $dbi->model('user');
+    my $where = $dbi->where;
+    $where->clause([
+      'and',
+      'id = :id',
+      "id <> ''",
+      'password = :password',
+      "password <> ''",
+      'admin <> 1',
+    ]);
+    $where->param({id => $user, password => $password});
+    my $user = $muser->select(where => $where)->one;
+    
+    if ($user) { $self->redirect_to('/') }
+    else { $state = 'login_fail' }
+  }
+  else { $state = 'login_form' }
+%>
+
 % layout 'common', title => 'ログイン';
 
-<h2>ログイン</h2>
-
-<form>
-  <div>ID:</div>
-  <div><%= input_tag 'ID' %></div>
-  <div>Password:</div>
-  <div><%= password_field 'password' %></div>
-  <input type="button" value="ログイン">
-</form>
+	<div data-role="header">
+		<h1>ログイン</h1>
+	</div>
+  
+  % if ($state eq 'login_fail') {
+    <div style="color:red;padding-left:20px;padding-top:20px;">ユーザー名あるいはパスワードが間違っています。</div>
+  % }
+  <form action="<%= url_for->query(op => 'login') %>" method="post">
+    <div data-role="fieldcontain" class="ui-hide-label">
+    	<label for="username">ユーザー名:</label>
+    	<%= input_tag "username", id => "username", value => "", placeholder => "ユーザー名" %>
+    </div>
+    <div data-role="fieldcontain" class="ui-hide-label">
+    	<label for="password">パスワード:</label>
+    	<input type="password" name="password" id="password" value="" placeholder="パスワード"/>
+    </div>
+    <input type="submit" value="ログイン">
+  </form>
