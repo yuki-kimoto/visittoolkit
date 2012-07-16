@@ -20,8 +20,8 @@ EOS
 $tm->lib(['../extlib/lib/perl5']);
 $tm->modules([
   ['Object::Simple' => '3.0625'],
-  ['Validator::Custom' => '0.1426'],
-  ['DBIx::Custom' => '0.25'],
+  ['Validator::Custom' => '0.15'],
+  ['DBIx::Custom' => '0.26'],
   ['DBIx::Connector' => '0.47'],
   ['DateTime' => '0.75']
 ]);

@@ -57,15 +57,15 @@ sub main {
 
   # Validator::Custom
   $require_ok = require_ok('Validator::Custom');
-  $version_ok = is($Validator::Custom::VERSION, '0.1426', 'Validator::Custom version: 0.1426');
-  push @$modules, ['Validator::Custom' => '0.1426'];
-  push @$failed, ['Validator::Custom' => '0.1426'] unless $require_ok && $version_ok;
+  $version_ok = is($Validator::Custom::VERSION, '0.15', 'Validator::Custom version: 0.15');
+  push @$modules, ['Validator::Custom' => '0.15'];
+  push @$failed, ['Validator::Custom' => '0.15'] unless $require_ok && $version_ok;
 
   # DBIx::Custom
   $require_ok = require_ok('DBIx::Custom');
-  $version_ok = is($DBIx::Custom::VERSION, '0.25', 'DBIx::Custom version: 0.25');
-  push @$modules, ['DBIx::Custom' => '0.25'];
-  push @$failed, ['DBIx::Custom' => '0.25'] unless $require_ok && $version_ok;
+  $version_ok = is($DBIx::Custom::VERSION, '0.26', 'DBIx::Custom version: 0.26');
+  push @$modules, ['DBIx::Custom' => '0.26'];
+  push @$failed, ['DBIx::Custom' => '0.26'] unless $require_ok && $version_ok;
 
   # DBIx::Connector
   $require_ok = require_ok('DBIx::Connector');
