@@ -23,7 +23,8 @@ $tm->modules([
   ['Validator::Custom' => '0.15'],
   ['DBIx::Custom' => '0.26'],
   ['DBIx::Connector' => '0.47'],
-  ['DateTime' => '0.75']
+  ['DateTime' => '0.75'],
+  ['MIME::Lite' => '3.028']
 ]);
 $tm->test_script(output => "$FindBin::Bin/t/module.t");
 

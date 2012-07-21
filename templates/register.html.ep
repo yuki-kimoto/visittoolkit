@@ -4,7 +4,7 @@
   my $state;
   my $operation = param('op');
   
-  # ログイン
+  # 新規登録
   if ($operation eq 'login') {
     my $user = param('username') // '';
     my $password = param('password') // '';
@@ -30,10 +30,10 @@
   else { $state = 'login_form' }
 %>
 
-% layout 'common', title => 'ログイン';
+% layout 'common', title => 'ユーザー登録';
 
 	<div data-role="header">
-		<h1>ログイン</h1>
+		<h1>ユーザー登録</h1>
 	</div>
   
   % if ($state eq 'login_fail') {
@@ -48,9 +48,10 @@
     	<label for="password">パスワード:</label>
     	<input type="password" name="password" id="password" value="" placeholder="パスワード"/>
     </div>
-    <input type="submit" value="ログイン">
+    <div data-role="fieldcontain" class="ui-hide-label">
+    	<label for="mail">メールアドレス:</label>
+    	<%= input_tag "mail", id => "mail", placeholder => "メールアドレス" %>
+    </div>
+    <input type="submit" value="登録">
   </form>
   <hr>
-  <div><a href="<%= url_for('/register') %>">新規の登録はこちらから</a></div>
-  <div><a href="<%= url_for('/reminder') %>">パスワードを忘れた方</a></div>
-

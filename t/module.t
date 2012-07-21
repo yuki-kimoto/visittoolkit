@@ -47,7 +47,7 @@ sub main {
   my $version_ok;
   my $version;
   
-  plan tests => 10;
+  plan tests => 12;
 
   # Object::Simple
   $require_ok = require_ok('Object::Simple');
@@ -78,6 +78,12 @@ sub main {
   $version_ok = is($DateTime::VERSION, '0.75', 'DateTime version: 0.75');
   push @$modules, ['DateTime' => '0.75'];
   push @$failed, ['DateTime' => '0.75'] unless $require_ok && $version_ok;
+
+  # MIME::Lite
+  $require_ok = require_ok('MIME::Lite');
+  $version_ok = is($MIME::Lite::VERSION, '3.028', 'MIME::Lite version: 3.028');
+  push @$modules, ['MIME::Lite' => '3.028'];
+  push @$failed, ['MIME::Lite' => '3.028'] unless $require_ok && $version_ok;
 
   # Print module URLs
   if (defined $command) {
